@@ -33,6 +33,5 @@ public class Main {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
     }
-    // myworldzycpc
 }
-//TheRedMaker_ will cry soon!!!! Help me!!!!!!!!!
+//myworldzycpc

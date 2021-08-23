@@ -29,7 +29,7 @@ public class ItemDebug extends Item implements IHasModel {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 
         BlockPos pos = playerIn.getPosition();
-        int id = GuiElementLoader.GUI_DEMO;
+        int id = GuiElementLoader.GUI_SETTINGS;
         playerIn.openGui(Main.instance, id, worldIn, pos.getX(), pos.getY(), pos.getZ());
 
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));

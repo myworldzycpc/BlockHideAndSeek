@@ -5,6 +5,7 @@ import io.github.myworldzycpc.block_has.inventory.ContainerDemo;
 import io.github.myworldzycpc.block_has.util.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -25,6 +26,8 @@ public class GuiContainerDemo extends GuiContainer {
 
     private static final int BUTTON_UP = 0;
     private static final int BUTTON_DOWN = 1;
+    private static final int TEXT_FIELD_TEST = 3;
+    private GuiTextField test;
 
     private Slot ironSlot;
 
@@ -99,6 +102,8 @@ public class GuiContainerDemo extends GuiContainer {
             }
         });
 
+        test = new GuiTextField(TEXT_FIELD_TEST, this.fontRenderer, offsetX + 0, offsetY + 0, 176, 20);
+        test.drawTextBox();
     }
 
     @Override
@@ -119,6 +124,39 @@ public class GuiContainerDemo extends GuiContainer {
         }
 
         this.ironSlot.putStack(amount == 0 ? new ItemStack(Items.IRON_INGOT, amount) : new ItemStack(Items.IRON_INGOT, amount));
+    }
+
+    /**
+     * Called from the main game loop to update the screen.
+     */
+    public void updateScreen() {
+        this.test.updateCursorCounter();
+    }
+
+    /**
+     * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
+     * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
+     */
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        this.test.textboxKeyTyped(typedChar, keyCode);
+
+    }
+
+    /**
+     * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
+     */
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        this.test.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    /**
+     * Draws the screen and all the components in it.
+     */
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        test.drawTextBox();
     }
 
 }

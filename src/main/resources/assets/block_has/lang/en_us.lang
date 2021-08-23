@@ -1,0 +1,19 @@
+
+item.block_has.name=Block Hide And Seek
+item.ready_on.name=Ready On
+item.ready_off.name=Ready Off
+item.debug.name=Debug Item
+item.become_selected_block.name=Become Selected Block
+
+itemGroup.item_tab=Block Hide And See
+
+block_has.gui.config.time_for_hunter_to_wait=Time For Hunter To Wait (s)
+block_has.gui.config.time_for_hunter_to_wait.tooltip=After the box hide and seek game begins, the hiding person takes the lead in entering the map and begins to hide. After waiting in the waiting hall for a period of time, the hunter begins to find the hidden box. [Unit: Second] (machine translation)
+block_has.gui.config.number_of_hunters=Number Of Hunters
+block_has.gui.config.number_of_hunters.tooltip=When there are a large number of hunters, generally one-fifth of the number of squares is enough; When the number is small, the number of hunters can be twice that of squares. But the number of hunters is at most one less than the box. (machine translation)
+block_has.gui.config.tool_cooling_down_time=Tool Cooling Down Time
+block_has.gui.config.tool_cooling_down_time.tooltip=The distance detection tool allows hunters to obtain the distance of the nearest square, but this item cannot be used continuously. It has a cooling time. [Unit: Second] (machine translation)
+block_has.gui.config.hall_position=Waiting Hall Position
+block_has.gui.config.hall_position.tooltip=Position of Waiting Hall
+
+block_has.container.demo=Demo

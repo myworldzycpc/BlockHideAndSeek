@@ -1,0 +1,19 @@
+[
+  {
+    "modid": "block_has",
+    "name": "Block Hide And Seek Engine",
+    "description": "A mod, engine of block hide and seek.",
+    "version": "1.0",
+    "mcversion": "1.12.2",
+    "url": "http://myworldzycpc.github.io/",
+    "updateUrl": "",
+    "authorList": [
+      "myworldzycpc",
+      "TheRedMaker_"
+    ],
+    "credits": "My great Forge\nOverthrow the garbage Fabric\nAll frameworks are covered\nThe network system is simple and clear\nSophisticated event system scheduling\nBug development has never been so simple",
+    "logoFile": "logo.png",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

@@ -1,5 +1,6 @@
 package io.github.myworldzycpc.block_has.client.gui;
 
+import io.github.myworldzycpc.block_has.func.FuncAlgorithms;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.inventory.ContainerDemo;
 import io.github.myworldzycpc.block_has.util.Reference;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
@@ -24,9 +26,9 @@ public class GuiContainerDemo extends GuiContainer {
     private static final String TEXTURE_PATH = Reference.MOD_ID + ":" + "textures/gui/container/gui_demo.png";
     private static final ResourceLocation TEXTURE = new ResourceLocation(TEXTURE_PATH);
 
-    private static final int BUTTON_UP = 0;
-    private static final int BUTTON_DOWN = 1;
-    private static final int TEXT_FIELD_TEST = 3;
+    private static final int BUTTON_UP = FuncAlgorithms.getNextId();
+    private static final int BUTTON_DOWN = FuncAlgorithms.getNextId();
+    private static final int TEXT_FIELD_TEST = FuncAlgorithms.getNextId();
     private GuiTextField test;
 
     private Slot ironSlot;
@@ -64,6 +66,8 @@ public class GuiContainerDemo extends GuiContainer {
     public void initGui() {
 
         super.initGui();
+
+        Keyboard.enableRepeatEvents(true);
         int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
 
         this.buttonList.add(new GuiButton(BUTTON_UP, offsetX + 153, offsetY + 17, 15, 10, "") {
@@ -103,7 +107,6 @@ public class GuiContainerDemo extends GuiContainer {
         });
 
         test = new GuiTextField(TEXT_FIELD_TEST, this.fontRenderer, offsetX + 0, offsetY + 0, 176, 20);
-        test.drawTextBox();
     }
 
     @Override
@@ -111,16 +114,13 @@ public class GuiContainerDemo extends GuiContainer {
         ItemStack stack = this.ironSlot.getStack();
         int amount = stack.isEmpty() ? 0 : stack.getCount();
 
-        switch (button.id) {
-            case BUTTON_DOWN:
-                amount = (amount + 64) % 65;
-                break;
-            case BUTTON_UP:
-                amount = (amount + 1) % 65;
-                break;
-            default:
-                super.actionPerformed(button);
-                return;
+        if (button.id == BUTTON_DOWN) {
+            amount = (amount + 64) % 65;
+        } else if (button.id == BUTTON_UP) {
+            amount = (amount + 1) % 65;
+        } else {
+            super.actionPerformed(button);
+            return;
         }
 
         this.ironSlot.putStack(amount == 0 ? new ItemStack(Items.IRON_INGOT, amount) : new ItemStack(Items.IRON_INGOT, amount));
@@ -157,6 +157,13 @@ public class GuiContainerDemo extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         test.drawTextBox();
+    }
+
+    /**
+     * Called when the screen is unloaded. Used to disable keyboard repeat events
+     */
+    public void onGuiClosed() {
+        Keyboard.enableRepeatEvents(false);
     }
 
 }

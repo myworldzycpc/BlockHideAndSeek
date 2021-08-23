@@ -7,13 +7,13 @@ item.become_selected_block.name=变成选中的方块
 
 itemGroup.item_tab=方块躲猫猫
 
-block_has.gui.config.time_for_hunter_to_wait=猎人等待时间（秒）
-block_has.gui.config.time_for_hunter_to_wait.tooltip=在方块躲猫猫游戏开始后，躲藏者率先进入地图开始躲藏，猎人在等待大厅等待一段时间后，开始找躲藏着的方块。[单位：秒]
-block_has.gui.config.number_of_hunters=猎人数量
-block_has.gui.config.number_of_hunters.tooltip=人数比较多的时候，一般猎人数量是方块的五分之一就够了；在人数比较少的时候，猎人数量可以是方块的两倍。但是猎人数量最多比方块少一个。
-block_has.gui.config.tool_cooling_down_time=工具冷却CD
-block_has.gui.config.tool_cooling_down_time.tooltip=距离检测工具可供猎人获得最近方块的距离，但是这个物品并不能连续使用，是有冷却CD的。[单位：秒]
-block_has.gui.config.hall_position=等待大厅位置
-block_has.gui.config.hall_position.tooltip=填入等待大厅坐标
-
 block_has.container.demo=示例
+block_has.container.settings=方块躲猫猫设置
+block_has.container.settings.time_for_hunter_to_wait=猎人等待时间（秒）
+block_has.container.settings.time_for_hunter_to_wait.tooltip=在方块躲猫猫游戏开始后，躲藏者率先进入地图开始躲藏，猎人在等待大厅等待一段时间后，开始找躲藏着的方块。[单位：秒]
+block_has.container.settings.number_of_hunters=猎人数量
+block_has.container.settings.number_of_hunters.tooltip=人数比较多的时候，一般猎人数量是方块的五分之一就够了；在人数比较少的时候，猎人数量可以是方块的两倍。但是猎人数量最多比方块少一个。
+block_has.container.settings.tool_cooling_down_time=工具冷却CD
+block_has.container.settings.tool_cooling_down_time.tooltip=距离检测工具可供猎人获得最近方块的距离，但是这个物品并不能连续使用，是有冷却CD的。[单位：秒]
+block_has.container.settings.hall_position=等待大厅位置
+block_has.container.settings.hall_position.tooltip=填入等待大厅坐标

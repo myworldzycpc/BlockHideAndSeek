@@ -9,6 +9,8 @@ public class SettingsWorldSavedData extends WorldSavedData {
 
     private Vec3d hallPosition = new Vec3d(0, 0, 0);
     private int timeForHunterToWait = 30;
+    private int numberOfHunters = 1;
+    private int toolCoolingDownTime = 10;
 
     public SettingsWorldSavedData(String name) {
         super(name);
@@ -22,9 +24,19 @@ public class SettingsWorldSavedData extends WorldSavedData {
         return timeForHunterToWait;
     }
 
-    public void add(Vec3d hallPosition, int timeForHunterToWait) {
+    public int getNumberOfHunters() {
+        return numberOfHunters;
+    }
+
+    public int getToolCoolingDownTime() {
+        return toolCoolingDownTime;
+    }
+
+    public void add(Vec3d hallPosition, int timeForHunterToWait, int numberOfHunters, int toolCoolingDownTime) {
         this.hallPosition = hallPosition;
         this.timeForHunterToWait = timeForHunterToWait;
+        this.numberOfHunters = numberOfHunters;
+        this.toolCoolingDownTime = toolCoolingDownTime;
         this.markDirty();
     }
 

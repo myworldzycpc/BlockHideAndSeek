@@ -16,15 +16,12 @@ public class ContainerSettings extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return new ItemStack(ModItems.DEBUG).isItemEqual(playerIn.getHeldItemMainhand());
+        return new ItemStack(ModItems.SETTINGS).isItemEqual(playerIn.getHeldItemMainhand());
     }
 
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
-        if (playerIn.isServerWorld()) {
-
-        }
     }
 
 

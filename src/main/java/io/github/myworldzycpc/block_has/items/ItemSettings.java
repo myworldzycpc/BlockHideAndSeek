@@ -2,20 +2,25 @@ package io.github.myworldzycpc.block_has.items;
 
 import io.github.myworldzycpc.block_has.Main;
 import io.github.myworldzycpc.block_has.init.ModItems;
+import io.github.myworldzycpc.block_has.network.MessageSettings;
+import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.IHasModel;
+import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-public class ItemDebug extends Item implements IHasModel {
+public class ItemSettings extends Item implements IHasModel {
 
-    public ItemDebug() {
-        setTranslationKey("debug");
-        setRegistryName("debug");
+    public ItemSettings() {
+        setTranslationKey("settings");
+        setRegistryName("settings");
         setCreativeTab(Main.ITEM_TAB);
 
         ModItems.ITEMS.add(this);
@@ -26,6 +31,12 @@ public class ItemDebug extends Item implements IHasModel {
      */
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 
+        if (!worldIn.isRemote) {
+            MessageSettings message = new MessageSettings();
+            message.nbt = new NBTTagCompound();
+            SettingsWorldSavedData.getGlobal(worldIn).writeToNBT(message.nbt);
+            NetworkLoader.instance.sendTo(message, (EntityPlayerMP) playerIn);
+        }
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }
 

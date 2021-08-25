@@ -82,19 +82,19 @@ public class GuiContainerSettings extends GuiContainer {
         widthList.add(this.fontRenderer.getStringWidth(titleNumberOfHunters));
         widthList.add(this.fontRenderer.getStringWidth(titleToolCoolingDownTime));
         widthList.add(this.fontRenderer.getStringWidth(titleHallPosition));
+        leastX = Collections.max(widthList);
         int y = 0;
         this.fontRenderer.drawString(titleGui, (this.xSize - this.fontRenderer.getStringWidth(titleGui)) / 2, y += 6, 0x404040);
         this.fontRenderer.drawString(titleTimeForHunterToWait, 6, (y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
         this.fontRenderer.drawString(titleNumberOfHunters, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
         this.fontRenderer.drawString(titleToolCoolingDownTime, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
         this.fontRenderer.drawString(titleHallPosition, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-        leastX = Collections.max(widthList);
 
     }
 
     @Override
     public void initGui() {
-
+        this.drawGuiContainerForegroundLayer(0, 0);
         super.initGui();
         Keyboard.enableRepeatEvents(true);
         int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
@@ -102,10 +102,16 @@ public class GuiContainerSettings extends GuiContainer {
         int y = offsetY + 6;
         int inputWidth = this.xSize - 12 - leastX - ELEMENTS_PADDING;
 
+        SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
+
         inputList.add(inputTimeForHunterToWait = new GuiTextField(INPUT_TIME_FOR_HUNTER_TO_WAIT, this.fontRenderer, offsetX + leastX + ELEMENTS_PADDING + 6, y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
-        inputTimeForHunterToWait.setText(String.valueOf(SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).getTimeForHunterToWait()));
+        inputTimeForHunterToWait.setText(String.valueOf(BlockHasSettingsGlobal.getTimeForHunterToWait()));
+
         inputList.add(inputNumberOfHunters = new GuiTextField(INPUT_NUMBER_OF_HUNTERS, this.fontRenderer, offsetX + leastX + ELEMENTS_PADDING + 6, y += INPUT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
+        inputNumberOfHunters.setText(String.valueOf(BlockHasSettingsGlobal.getNumberOfHunters()));
+
         inputList.add(inputToolCoolingDownTime = new GuiTextField(INPUT_TOOL_COOLING_DOWN_TIME, this.fontRenderer, offsetX + leastX + ELEMENTS_PADDING + 6, y += INPUT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
+        inputToolCoolingDownTime.setText(String.valueOf(BlockHasSettingsGlobal.getToolCoolingDownTime()));
 
         int x = offsetX + leastX + ELEMENTS_PADDING + 6;
         int oneThirdWidth = (inputWidth - ELEMENTS_PADDING * 2) / 3;
@@ -173,7 +179,12 @@ public class GuiContainerSettings extends GuiContainer {
     public void onGuiClosed() {
         super.onGuiClosed();
         Keyboard.enableRepeatEvents(false);
-        SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).add(new Vec3d(0, 0, 0), getInputTimeForHunterToWait());
+        SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).add(
+                new Vec3d(getInputHallPositionX(), getInputHallPositionY(), getInputHallPositionZ()),
+                getInputTimeForHunterToWait(),
+                getInputNumberOfHunters(),
+                getInputToolCoolingDownTime()
+        );
         MessageSettings message = new MessageSettings();
         message.nbt = new NBTTagCompound();
         SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).writeToNBT(message.nbt);
@@ -185,17 +196,85 @@ public class GuiContainerSettings extends GuiContainer {
 
     public int getInputTimeForHunterToWait() {
         int num;
-
         try {
             num = Integer.parseInt(inputTimeForHunterToWait.getText());
         } catch (Exception e) {
             num = 30;
         }
-
         if (num < 0) {
-            num = 30;
+            num = 0;
         }
+        return num;
+    }
 
+    public int getInputNumberOfHunters() {
+        int num;
+        try {
+            num = Integer.parseInt(inputNumberOfHunters.getText());
+        } catch (Exception e) {
+            num = 1;
+        }
+        if (num < 1) {
+            num = 1;
+        }
+        return num;
+    }
+
+    public int getInputToolCoolingDownTime() {
+        int num;
+        try {
+            num = Integer.parseInt(inputToolCoolingDownTime.getText());
+        } catch (Exception e) {
+            num = 10;
+        }
+        if (num < 0) {
+            num = 0;
+        }
+        return num;
+    }
+
+    public double getInputHallPositionX() {
+        double num;
+        try {
+            num = Integer.parseInt(inputHallPositionX.getText());
+        } catch (Exception e) {
+            num = inventorySlotsIn.player.getPosition().getX();
+        }
+        if (num < -30000000.0d) {
+            num = -30000000.0d;
+        } else if (num > 30000000.0d) {
+            num = 30000000.0d;
+        }
+        return num;
+    }
+
+    public double getInputHallPositionY() {
+        double num;
+        try {
+            num = Integer.parseInt(inputHallPositionY.getText());
+        } catch (Exception e) {
+            num = inventorySlotsIn.player.getPosition().getY();
+        }
+        if (num < -30000000.0d) {
+            num = -30000000.0d;
+        } else if (num > 30000000.0d) {
+            num = 30000000.0d;
+        }
+        return num;
+    }
+
+    public double getInputHallPositionZ() {
+        double num;
+        try {
+            num = Integer.parseInt(inputHallPositionZ.getText());
+        } catch (Exception e) {
+            num = inventorySlotsIn.player.getPosition().getZ();
+        }
+        if (num < -30000000.0d) {
+            num = -30000000.0d;
+        } else if (num > 30000000.0d) {
+            num = 30000000.0d;
+        }
         return num;
     }
 

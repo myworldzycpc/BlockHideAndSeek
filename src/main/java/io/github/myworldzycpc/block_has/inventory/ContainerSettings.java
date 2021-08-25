@@ -22,7 +22,9 @@ public class ContainerSettings extends Container {
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
+        if (playerIn.isServerWorld()) {
 
+        }
     }
 
 

@@ -36,8 +36,8 @@ public class SettingsWorldSavedData extends WorldSavedData {
         }
         NBTTagCompound hallPositionCompound = (NBTTagCompound) settingsCompound.getTag("hallPosition");
         hallPosition = new Vec3d(hallPositionCompound.getDouble("x"), hallPositionCompound.getDouble("y"), hallPositionCompound.getDouble("z"));
-
         timeForHunterToWait = settingsCompound.getInteger("timeForHunterToWait");
+        this.markDirty();
     }
 
     @Override

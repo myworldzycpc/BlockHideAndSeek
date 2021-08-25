@@ -177,7 +177,9 @@ public class GuiContainerSettings extends GuiContainer {
         MessageSettings message = new MessageSettings();
         message.nbt = new NBTTagCompound();
         SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).writeToNBT(message.nbt);
+
         message.nbt.setString("player", inventorySlotsIn.player.getUniqueID().toString());
+
         NetworkLoader.instance.sendToServer(message);
     }
 

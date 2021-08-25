@@ -7,9 +7,11 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerSettings extends Container {
 
+    public EntityPlayer player;
+
     public ContainerSettings(EntityPlayer player) {
         super();
-
+        this.player = player;
     }
 
     @Override

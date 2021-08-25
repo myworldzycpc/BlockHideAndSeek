@@ -1,6 +1,7 @@
 package io.github.myworldzycpc.block_has;
 
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
+import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.proxy.CommonProxy;
 import io.github.myworldzycpc.block_has.tabs.ItemTab;
 import io.github.myworldzycpc.block_has.util.Reference;
@@ -23,6 +24,7 @@ public class Main {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        new NetworkLoader(event);
     }
 
     @Mod.EventHandler

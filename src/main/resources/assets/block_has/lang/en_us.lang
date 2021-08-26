@@ -4,6 +4,7 @@ item.ready_on.name=Ready On
 item.ready_off.name=Ready Off
 item.debug.name=Debug Item
 item.become_selected_block.name=Become Selected Block
+item.settings.name=Settings
 
 itemGroup.item_tab=Block Hide And See
 
@@ -17,3 +18,5 @@ block_has.container.settings.tool_cooling_down_time=Tool Cooling Down Time
 block_has.container.settings.tool_cooling_down_time.tooltip=The distance detection tool allows hunters to obtain the distance of the nearest square, but this item cannot be used continuously. It has a cooling time. [Unit: Second] (machine translation)
 block_has.container.settings.hall_position=Waiting Hall Position
 block_has.container.settings.hall_position.tooltip=Position of Waiting Hall
+block_has.container.settings.default_game_mode=Default Game Mode
+block_has.container.settings.playing_game_mode=Game Mode in Playing

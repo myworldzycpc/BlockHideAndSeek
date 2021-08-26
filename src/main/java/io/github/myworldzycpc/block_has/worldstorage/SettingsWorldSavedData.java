@@ -2,6 +2,7 @@ package io.github.myworldzycpc.block_has.worldstorage;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -11,6 +12,8 @@ public class SettingsWorldSavedData extends WorldSavedData {
     private int timeForHunterToWait = 30;
     private int numberOfHunters = 1;
     private int toolCoolingDownTime = 10;
+    private GameType defaultGameMode = GameType.CREATIVE;
+    private GameType playingGameMode = GameType.CREATIVE;
 
     public SettingsWorldSavedData(String name) {
         super(name);
@@ -32,11 +35,22 @@ public class SettingsWorldSavedData extends WorldSavedData {
         return toolCoolingDownTime;
     }
 
-    public void add(Vec3d hallPosition, int timeForHunterToWait, int numberOfHunters, int toolCoolingDownTime) {
+    public GameType getDefaultGameMode() {
+        return defaultGameMode;
+    }
+
+    public GameType getPlayingGameMode() {
+        return playingGameMode;
+    }
+
+    public void add(Vec3d hallPosition, int timeForHunterToWait, int numberOfHunters, int toolCoolingDownTime,
+                    GameType defaultGameMode, GameType playingGameMode) {
         this.hallPosition = hallPosition;
         this.timeForHunterToWait = timeForHunterToWait;
         this.numberOfHunters = numberOfHunters;
         this.toolCoolingDownTime = toolCoolingDownTime;
+        this.defaultGameMode = defaultGameMode;
+        this.playingGameMode = playingGameMode;
         this.markDirty();
     }
 
@@ -48,7 +62,11 @@ public class SettingsWorldSavedData extends WorldSavedData {
         }
         NBTTagCompound hallPositionCompound = (NBTTagCompound) settingsCompound.getTag("hallPosition");
         hallPosition = new Vec3d(hallPositionCompound.getDouble("x"), hallPositionCompound.getDouble("y"), hallPositionCompound.getDouble("z"));
-        timeForHunterToWait = settingsCompound.getInteger("timeForHunterToWait");
+        this.timeForHunterToWait = settingsCompound.getInteger("timeForHunterToWait");
+        this.numberOfHunters = settingsCompound.getInteger("numberOfHunters");
+        this.toolCoolingDownTime = settingsCompound.getInteger("toolCoolingDownTime");
+        this.defaultGameMode = GameType.getByID(settingsCompound.getInteger("defaultGameMode"));
+        this.playingGameMode = GameType.getByID(settingsCompound.getInteger("playingGameMode"));
         this.markDirty();
     }
 
@@ -56,12 +74,17 @@ public class SettingsWorldSavedData extends WorldSavedData {
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         NBTTagCompound settingsCompound = new NBTTagCompound();
         settingsCompound.setInteger("timeForHunterToWait", timeForHunterToWait);
+        settingsCompound.setInteger("numberOfHunters", numberOfHunters);
+        settingsCompound.setInteger("toolCoolingDownTime", toolCoolingDownTime);
+        settingsCompound.setInteger("defaultGameMode", defaultGameMode.getID());
+        settingsCompound.setInteger("playingGameMode", playingGameMode.getID());
 
         NBTTagCompound hallPositionCompound = new NBTTagCompound();
         hallPositionCompound.setDouble("x", hallPosition.x);
         hallPositionCompound.setDouble("y", hallPosition.y);
         hallPositionCompound.setDouble("z", hallPosition.z);
         settingsCompound.setTag("hallPosition", hallPositionCompound);
+
         nbt.setTag("settings", settingsCompound);
         return nbt;
     }

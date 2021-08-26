@@ -4,6 +4,7 @@ item.ready_on.name=已准备
 item.ready_off.name=未准备
 item.debug.name=调试物品
 item.become_selected_block.name=变成选中的方块
+item.settings.name=设置
 
 itemGroup.item_tab=方块躲猫猫
 
@@ -17,3 +18,5 @@ block_has.container.settings.tool_cooling_down_time=工具冷却CD
 block_has.container.settings.tool_cooling_down_time.tooltip=距离检测工具可供猎人获得最近方块的距离，但是这个物品并不能连续使用，是有冷却CD的。[单位：秒]
 block_has.container.settings.hall_position=等待大厅位置
 block_has.container.settings.hall_position.tooltip=填入等待大厅坐标
+block_has.container.settings.default_game_mode=默认游戏模式
+block_has.container.settings.playing_game_mode=开始后游戏模式

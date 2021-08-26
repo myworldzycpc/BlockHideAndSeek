@@ -5,6 +5,7 @@ import io.github.myworldzycpc.block_has.inventory.ContainerSettings;
 import io.github.myworldzycpc.block_has.network.MessageSettings;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.Reference;
+import io.github.myworldzycpc.block_has.util.Translation;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -14,6 +15,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameType;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -37,9 +39,14 @@ public class GuiContainerSettings extends GuiContainer {
     private static final int INPUT_HALL_POSITION_X = FuncAlgorithms.getNextId();
     private static final int INPUT_HALL_POSITION_Y = FuncAlgorithms.getNextId();
     private static final int INPUT_HALL_POSITION_Z = FuncAlgorithms.getNextId();
+    private static final int BUTTON_DEFAULT_GAME_MODE = FuncAlgorithms.getNextId();
+    private static final int BUTTON_PLAYING_GAME_MODE = FuncAlgorithms.getNextId();
+    private static final int BUTTON_ADD_MAP = FuncAlgorithms.getNextId();
 
     private static final int ELEMENTS_PADDING = 5;
     private static final int INPUT_HEIGHT = 18;
+
+    public static boolean needUpdate = false;
 
     private GuiTextField inputTimeForHunterToWait;
     private GuiTextField inputNumberOfHunters;
@@ -48,14 +55,22 @@ public class GuiContainerSettings extends GuiContainer {
     private GuiTextField inputHallPositionY;
     private GuiTextField inputHallPositionZ;
 
+    private GuiButton buttonDefaultGameMode;
+    private GuiButton buttonPlayingGameMode;
+
     private List<GuiTextField> inputList = new ArrayList<GuiTextField>();
 
-    private static int leastX;
+    private int leastX;
+
+    private boolean hasChange = false;
+
+    private GameType defaultGameMode;
+    private GameType playingGameMode;
 
     public GuiContainerSettings(ContainerSettings inventorySlotsIn) {
         super(inventorySlotsIn);
         this.xSize = 250;
-        this.ySize = 150;
+        this.ySize = 180;
         this.inventorySlotsIn = inventorySlotsIn;
     }
 
@@ -73,22 +88,18 @@ public class GuiContainerSettings extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 
         List<Integer> widthList = new ArrayList<Integer>();
-        String titleGui = I18n.format("block_has.container.settings");
-        String titleTimeForHunterToWait = I18n.format("block_has.container.settings.time_for_hunter_to_wait");
-        String titleNumberOfHunters = I18n.format("block_has.container.settings.number_of_hunters");
-        String titleToolCoolingDownTime = I18n.format("block_has.container.settings.tool_cooling_down_time");
-        String titleHallPosition = I18n.format("block_has.container.settings.hall_position");
-        widthList.add(this.fontRenderer.getStringWidth(titleTimeForHunterToWait));
-        widthList.add(this.fontRenderer.getStringWidth(titleNumberOfHunters));
-        widthList.add(this.fontRenderer.getStringWidth(titleToolCoolingDownTime));
-        widthList.add(this.fontRenderer.getStringWidth(titleHallPosition));
+
+        widthList.add(this.fontRenderer.getStringWidth(Translation.titleTimeForHunterToWait));
+        widthList.add(this.fontRenderer.getStringWidth(Translation.titleNumberOfHunters));
+        widthList.add(this.fontRenderer.getStringWidth(Translation.titleToolCoolingDownTime));
+        widthList.add(this.fontRenderer.getStringWidth(Translation.titleHallPosition));
         leastX = Collections.max(widthList);
         int y = 0;
-        this.fontRenderer.drawString(titleGui, (this.xSize - this.fontRenderer.getStringWidth(titleGui)) / 2, y += 6, 0x404040);
-        this.fontRenderer.drawString(titleTimeForHunterToWait, 6, (y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-        this.fontRenderer.drawString(titleNumberOfHunters, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-        this.fontRenderer.drawString(titleToolCoolingDownTime, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-        this.fontRenderer.drawString(titleHallPosition, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(Translation.titleGui, (this.xSize - this.fontRenderer.getStringWidth(Translation.titleGui)) / 2, y += 6, 0x404040);
+        this.fontRenderer.drawString(Translation.titleTimeForHunterToWait, 6, (y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(Translation.titleNumberOfHunters, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(Translation.titleToolCoolingDownTime, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(Translation.titleHallPosition, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
 
     }
 
@@ -102,31 +113,34 @@ public class GuiContainerSettings extends GuiContainer {
         int y = offsetY + 6;
         int inputWidth = this.xSize - 12 - leastX - ELEMENTS_PADDING;
 
-        SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
-
         inputList.add(inputTimeForHunterToWait = new GuiTextField(INPUT_TIME_FOR_HUNTER_TO_WAIT, this.fontRenderer, offsetX + leastX + ELEMENTS_PADDING + 6, y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
-        inputTimeForHunterToWait.setText(String.valueOf(BlockHasSettingsGlobal.getTimeForHunterToWait()));
-
         inputList.add(inputNumberOfHunters = new GuiTextField(INPUT_NUMBER_OF_HUNTERS, this.fontRenderer, offsetX + leastX + ELEMENTS_PADDING + 6, y += INPUT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
-        inputNumberOfHunters.setText(String.valueOf(BlockHasSettingsGlobal.getNumberOfHunters()));
-
         inputList.add(inputToolCoolingDownTime = new GuiTextField(INPUT_TOOL_COOLING_DOWN_TIME, this.fontRenderer, offsetX + leastX + ELEMENTS_PADDING + 6, y += INPUT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
-        inputToolCoolingDownTime.setText(String.valueOf(BlockHasSettingsGlobal.getToolCoolingDownTime()));
 
         int x = offsetX + leastX + ELEMENTS_PADDING + 6;
         int oneThirdWidth = (inputWidth - ELEMENTS_PADDING * 2) / 3;
         inputList.add(inputHallPositionX = new GuiTextField(INPUT_HALL_POSITION_X, this.fontRenderer, x, y += INPUT_HEIGHT + ELEMENTS_PADDING, oneThirdWidth, INPUT_HEIGHT));
         inputList.add(inputHallPositionY = new GuiTextField(INPUT_HALL_POSITION_Y, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
         inputList.add(inputHallPositionZ = new GuiTextField(INPUT_HALL_POSITION_Z, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
-        Vec3d hallPosition = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).getHallPosition();
-        inputHallPositionX.setText(String.valueOf(hallPosition.x));
-        inputHallPositionY.setText(String.valueOf(hallPosition.y));
-        inputHallPositionZ.setText(String.valueOf(hallPosition.z));
+
+        this.buttonList.add(buttonDefaultGameMode = new GuiButton(BUTTON_DEFAULT_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
+        this.buttonList.add(buttonPlayingGameMode = new GuiButton(BUTTON_PLAYING_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
+
+        this.updateInputsValue();
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
+        if (button.id == BUTTON_DEFAULT_GAME_MODE) {
+            defaultGameMode = GameType.getByID(defaultGameMode.getID() + 1 % 4);
+            this.drawSelectButton();
+            updateSettingsData();
+        } else if (button.id == BUTTON_PLAYING_GAME_MODE) {
+            playingGameMode = GameType.getByID(playingGameMode.getID() + 1 % 4);
+            this.drawSelectButton();
+            updateSettingsData();
+        }
     }
 
 
@@ -138,7 +152,10 @@ public class GuiContainerSettings extends GuiContainer {
         for (GuiTextField textField : inputList) {
             textField.updateCursorCounter();
         }
-
+        if (needUpdate) {
+            needUpdate = false;
+            this.updateInputsValue();
+        }
     }
 
     /**
@@ -150,6 +167,7 @@ public class GuiContainerSettings extends GuiContainer {
         for (GuiTextField textField : inputList) {
             textField.textboxKeyTyped(typedChar, keyCode);
         }
+        this.hasChange = true;
     }
 
     /**
@@ -159,6 +177,10 @@ public class GuiContainerSettings extends GuiContainer {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         for (GuiTextField textField : inputList) {
             textField.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+        if (this.hasChange) {
+            this.hasChange = false;
+            this.updateSettingsData();
         }
     }
 
@@ -179,103 +201,111 @@ public class GuiContainerSettings extends GuiContainer {
     public void onGuiClosed() {
         super.onGuiClosed();
         Keyboard.enableRepeatEvents(false);
+        updateSettingsData();
+    }
+
+    public void updateSettingsData() {
         SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).add(
                 new Vec3d(getInputHallPositionX(), getInputHallPositionY(), getInputHallPositionZ()),
                 getInputTimeForHunterToWait(),
                 getInputNumberOfHunters(),
-                getInputToolCoolingDownTime()
+                getInputToolCoolingDownTime(),
+                getButtonDefaultGameMode(),
+                getButtonPlayingGameMode()
         );
         MessageSettings message = new MessageSettings();
         message.nbt = new NBTTagCompound();
         SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).writeToNBT(message.nbt);
 
         message.nbt.setString("player", inventorySlotsIn.player.getUniqueID().toString());
+        message.nbt.setString("operation", "update_settings_data");
 
         NetworkLoader.instance.sendToServer(message);
     }
 
+    public void updateInputsValue() {
+        SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
+
+        this.defaultGameMode = BlockHasSettingsGlobal.getDefaultGameMode();
+        this.playingGameMode = BlockHasSettingsGlobal.getPlayingGameMode();
+        this.drawSelectButton();
+
+        inputTimeForHunterToWait.setText(String.valueOf(BlockHasSettingsGlobal.getTimeForHunterToWait()));
+        inputNumberOfHunters.setText(String.valueOf(BlockHasSettingsGlobal.getNumberOfHunters()));
+        inputToolCoolingDownTime.setText(String.valueOf(BlockHasSettingsGlobal.getToolCoolingDownTime()));
+
+        Vec3d hallPosition = BlockHasSettingsGlobal.getHallPosition();
+        inputHallPositionX.setText(String.valueOf(hallPosition.x));
+        inputHallPositionY.setText(String.valueOf(hallPosition.y));
+        inputHallPositionZ.setText(String.valueOf(hallPosition.z));
+    }
+
     public int getInputTimeForHunterToWait() {
-        int num;
-        try {
-            num = Integer.parseInt(inputTimeForHunterToWait.getText());
-        } catch (Exception e) {
-            num = 30;
-        }
-        if (num < 0) {
-            num = 0;
-        }
-        return num;
+        return getValueWithDefault(inputTimeForHunterToWait.getText(), 30, 0, Integer.MAX_VALUE);
     }
 
     public int getInputNumberOfHunters() {
-        int num;
-        try {
-            num = Integer.parseInt(inputNumberOfHunters.getText());
-        } catch (Exception e) {
-            num = 1;
-        }
-        if (num < 1) {
-            num = 1;
-        }
-        return num;
+        return getValueWithDefault(inputNumberOfHunters.getText(), 1, 1, Integer.MAX_VALUE);
     }
 
     public int getInputToolCoolingDownTime() {
-        int num;
-        try {
-            num = Integer.parseInt(inputToolCoolingDownTime.getText());
-        } catch (Exception e) {
-            num = 10;
-        }
-        if (num < 0) {
-            num = 0;
-        }
-        return num;
+        return getValueWithDefault(inputToolCoolingDownTime.getText(), 10, 0, Integer.MAX_VALUE);
     }
 
     public double getInputHallPositionX() {
-        double num;
-        try {
-            num = Integer.parseInt(inputHallPositionX.getText());
-        } catch (Exception e) {
-            num = inventorySlotsIn.player.getPosition().getX();
-        }
-        if (num < -30000000.0d) {
-            num = -30000000.0d;
-        } else if (num > 30000000.0d) {
-            num = 30000000.0d;
-        }
-        return num;
+        return getValueWithDefault(inputHallPositionX.getText(), inventorySlotsIn.player.getPosition().getX(), -30000000.0d, 30000000.0d);
+
     }
 
     public double getInputHallPositionY() {
-        double num;
+        return getValueWithDefault(inputHallPositionY.getText(), inventorySlotsIn.player.getPosition().getY(), 0.0d, 256.0d);
+    }
+
+    public double getInputHallPositionZ() {
+        return getValueWithDefault(inputHallPositionZ.getText(), inventorySlotsIn.player.getPosition().getZ(), -30000000.0d, 30000000.0d);
+    }
+
+    public GameType getButtonDefaultGameMode() {
+        return this.defaultGameMode;
+    }
+
+    public GameType getButtonPlayingGameMode() {
+        return this.playingGameMode;
+    }
+
+    public int getValueWithDefault(String text, int _default, int min, int max) {
+        int num;
         try {
-            num = Integer.parseInt(inputHallPositionY.getText());
+            num = Integer.parseInt(text);
         } catch (Exception e) {
-            num = inventorySlotsIn.player.getPosition().getY();
+            num = _default;
         }
-        if (num < -30000000.0d) {
-            num = -30000000.0d;
-        } else if (num > 30000000.0d) {
-            num = 30000000.0d;
+        if (num < min) {
+            num = min;
+        } else if (num > max) {
+            num = max;
         }
         return num;
     }
 
-    public double getInputHallPositionZ() {
+    public double getValueWithDefault(String text, double _default, double min, double max) {
         double num;
         try {
-            num = Integer.parseInt(inputHallPositionZ.getText());
+            num = Double.parseDouble(text);
         } catch (Exception e) {
-            num = inventorySlotsIn.player.getPosition().getZ();
+            num = _default;
         }
-        if (num < -30000000.0d) {
-            num = -30000000.0d;
-        } else if (num > 30000000.0d) {
-            num = 30000000.0d;
+        if (num < min) {
+            num = min;
+        } else if (num > max) {
+            num = max;
         }
         return num;
+    }
+
+    private void drawSelectButton() {
+        buttonDefaultGameMode.displayString = String.format("%s: %s", Translation.defaultGameMode, I18n.format("gameMode." + defaultGameMode.getName()));
+        buttonPlayingGameMode.displayString = String.format("%s: %s", Translation.playingGameMode, I18n.format("gameMode." + playingGameMode.getName()));
     }
 
 }

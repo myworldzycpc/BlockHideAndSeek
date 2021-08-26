@@ -35,6 +35,7 @@ public class ItemSettings extends Item implements IHasModel {
             MessageSettings message = new MessageSettings();
             message.nbt = new NBTTagCompound();
             SettingsWorldSavedData.getGlobal(worldIn).writeToNBT(message.nbt);
+            message.nbt.setString("operation", "open_gui");
             NetworkLoader.instance.sendTo(message, (EntityPlayerMP) playerIn);
         }
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));

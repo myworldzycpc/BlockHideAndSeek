@@ -2,6 +2,7 @@ package io.github.myworldzycpc.block_has.items;
 
 import io.github.myworldzycpc.block_has.Main;
 import io.github.myworldzycpc.block_has.init.ModItems;
+import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.network.MessageSettings;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.IHasModel;
@@ -36,6 +37,7 @@ public class ItemSettings extends Item implements IHasModel {
             message.nbt = new NBTTagCompound();
             SettingsWorldSavedData.getGlobal(worldIn).writeToNBT(message.nbt);
             message.nbt.setString("operation", "open_gui");
+            message.nbt.setInteger("guiId", GuiElementLoader.GUI_SETTINGS);
             NetworkLoader.instance.sendTo(message, (EntityPlayerMP) playerIn);
         }
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));

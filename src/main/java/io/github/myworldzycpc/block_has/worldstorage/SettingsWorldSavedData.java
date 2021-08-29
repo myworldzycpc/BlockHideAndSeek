@@ -1,10 +1,15 @@
 package io.github.myworldzycpc.block_has.worldstorage;
 
+import io.github.myworldzycpc.block_has.util.BlockHasMap;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsWorldSavedData extends WorldSavedData {
 
@@ -14,6 +19,7 @@ public class SettingsWorldSavedData extends WorldSavedData {
     private int toolCoolingDownTime = 10;
     private GameType defaultGameMode = GameType.CREATIVE;
     private GameType playingGameMode = GameType.CREATIVE;
+    private List<BlockHasMap> blockHasMaps = new ArrayList<BlockHasMap>();
 
     public SettingsWorldSavedData(String name) {
         super(name);
@@ -43,8 +49,12 @@ public class SettingsWorldSavedData extends WorldSavedData {
         return playingGameMode;
     }
 
-    public void add(Vec3d hallPosition, int timeForHunterToWait, int numberOfHunters, int toolCoolingDownTime,
-                    GameType defaultGameMode, GameType playingGameMode) {
+    public List<BlockHasMap> getBlockHasMaps() {
+        return blockHasMaps;
+    }
+
+    public void addSettings(Vec3d hallPosition, int timeForHunterToWait, int numberOfHunters, int toolCoolingDownTime,
+                            GameType defaultGameMode, GameType playingGameMode) {
         this.hallPosition = hallPosition;
         this.timeForHunterToWait = timeForHunterToWait;
         this.numberOfHunters = numberOfHunters;
@@ -52,6 +62,22 @@ public class SettingsWorldSavedData extends WorldSavedData {
         this.defaultGameMode = defaultGameMode;
         this.playingGameMode = playingGameMode;
         this.markDirty();
+    }
+
+    public void setBlockHasMaps(List<BlockHasMap> blockHasMaps) {
+        this.blockHasMaps = blockHasMaps;
+    }
+
+    public void setBlockHasMap(BlockHasMap blockHasMap, int index) {
+        this.blockHasMaps.set(index, blockHasMap);
+    }
+
+    public void addBlockHasMap(BlockHasMap blockHasMap) {
+        this.blockHasMaps.add(blockHasMap);
+    }
+
+    public void removeBlockHasMap(int index) {
+        this.blockHasMaps.remove(index);
     }
 
     @Override
@@ -67,6 +93,14 @@ public class SettingsWorldSavedData extends WorldSavedData {
         this.toolCoolingDownTime = settingsCompound.getInteger("toolCoolingDownTime");
         this.defaultGameMode = GameType.getByID(settingsCompound.getInteger("defaultGameMode"));
         this.playingGameMode = GameType.getByID(settingsCompound.getInteger("playingGameMode"));
+
+        this.blockHasMaps.clear();
+        NBTTagList blockHasMapsList = (NBTTagList) settingsCompound.getTag("blockHasMaps");
+        for (int i = 0; i < blockHasMapsList.tagCount(); i++) {
+            NBTTagCompound blockHasMapCompound = (NBTTagCompound) blockHasMapsList.get(i);
+            this.blockHasMaps.add(new BlockHasMap(blockHasMapCompound));
+        }
+
         this.markDirty();
     }
 
@@ -84,6 +118,12 @@ public class SettingsWorldSavedData extends WorldSavedData {
         hallPositionCompound.setDouble("y", hallPosition.y);
         hallPositionCompound.setDouble("z", hallPosition.z);
         settingsCompound.setTag("hallPosition", hallPositionCompound);
+
+        NBTTagList blockHasMapsList = new NBTTagList();
+        for (BlockHasMap blockHasMap : this.blockHasMaps) {
+            blockHasMapsList.appendTag(blockHasMap.toNBT());
+        }
+        settingsCompound.setTag("blockHasMaps", blockHasMapsList);
 
         nbt.setTag("settings", settingsCompound);
         return nbt;

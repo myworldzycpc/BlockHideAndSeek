@@ -2,6 +2,7 @@ package io.github.myworldzycpc.block_has.client.gui;
 
 import io.github.myworldzycpc.block_has.func.FuncAlgorithms;
 import io.github.myworldzycpc.block_has.inventory.ContainerSettings;
+import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.network.MessageSettings;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.Reference;
@@ -58,6 +59,8 @@ public class GuiContainerSettings extends GuiContainer {
     private GuiButton buttonDefaultGameMode;
     private GuiButton buttonPlayingGameMode;
 
+    private GuiButton buttonAddMap;
+
     private List<GuiTextField> inputList = new ArrayList<GuiTextField>();
 
     private int leastX;
@@ -70,7 +73,7 @@ public class GuiContainerSettings extends GuiContainer {
     public GuiContainerSettings(ContainerSettings inventorySlotsIn) {
         super(inventorySlotsIn);
         this.xSize = 250;
-        this.ySize = 180;
+        this.ySize = 190;
         this.inventorySlotsIn = inventorySlotsIn;
     }
 
@@ -105,10 +108,13 @@ public class GuiContainerSettings extends GuiContainer {
 
     @Override
     public void initGui() {
+        Translation.update();
         this.drawGuiContainerForegroundLayer(0, 0);
         super.initGui();
         Keyboard.enableRepeatEvents(true);
         int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
+
+        this.inputList.clear();
 
         int y = offsetY + 6;
         int inputWidth = this.xSize - 12 - leastX - ELEMENTS_PADDING;
@@ -125,6 +131,7 @@ public class GuiContainerSettings extends GuiContainer {
 
         this.buttonList.add(buttonDefaultGameMode = new GuiButton(BUTTON_DEFAULT_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
         this.buttonList.add(buttonPlayingGameMode = new GuiButton(BUTTON_PLAYING_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
+        this.buttonList.add(buttonAddMap = new GuiButton(BUTTON_ADD_MAP, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
 
         this.updateInputsValue();
     }
@@ -140,6 +147,12 @@ public class GuiContainerSettings extends GuiContainer {
             playingGameMode = GameType.getByID(playingGameMode.getID() + 1 % 4);
             this.drawSelectButton();
             updateSettingsData();
+        } else if (button.id == BUTTON_ADD_MAP) {
+            MessageSettings message = new MessageSettings();
+            message.nbt = new NBTTagCompound();
+            message.nbt.setString("operation", "open_gui");
+            message.nbt.setInteger("guiId", GuiElementLoader.GUI_ADD_MAP);
+            NetworkLoader.instance.sendToServer(message);
         }
     }
 
@@ -181,6 +194,7 @@ public class GuiContainerSettings extends GuiContainer {
         if (this.hasChange) {
             this.hasChange = false;
             this.updateSettingsData();
+            this.updateInputsValue();
         }
     }
 
@@ -205,7 +219,7 @@ public class GuiContainerSettings extends GuiContainer {
     }
 
     public void updateSettingsData() {
-        SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).add(
+        SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).addSettings(
                 new Vec3d(getInputHallPositionX(), getInputHallPositionY(), getInputHallPositionZ()),
                 getInputTimeForHunterToWait(),
                 getInputNumberOfHunters(),
@@ -230,6 +244,8 @@ public class GuiContainerSettings extends GuiContainer {
         this.playingGameMode = BlockHasSettingsGlobal.getPlayingGameMode();
         this.drawSelectButton();
 
+        this.buttonAddMap.displayString = Translation.addMap + "...";
+
         inputTimeForHunterToWait.setText(String.valueOf(BlockHasSettingsGlobal.getTimeForHunterToWait()));
         inputNumberOfHunters.setText(String.valueOf(BlockHasSettingsGlobal.getNumberOfHunters()));
         inputToolCoolingDownTime.setText(String.valueOf(BlockHasSettingsGlobal.getToolCoolingDownTime()));
@@ -241,28 +257,28 @@ public class GuiContainerSettings extends GuiContainer {
     }
 
     public int getInputTimeForHunterToWait() {
-        return getValueWithDefault(inputTimeForHunterToWait.getText(), 30, 0, Integer.MAX_VALUE);
+        return FuncAlgorithms.getValueWithDefault(inputTimeForHunterToWait.getText(), 30, 0, Integer.MAX_VALUE);
     }
 
     public int getInputNumberOfHunters() {
-        return getValueWithDefault(inputNumberOfHunters.getText(), 1, 1, Integer.MAX_VALUE);
+        return FuncAlgorithms.getValueWithDefault(inputNumberOfHunters.getText(), 1, 1, Integer.MAX_VALUE);
     }
 
     public int getInputToolCoolingDownTime() {
-        return getValueWithDefault(inputToolCoolingDownTime.getText(), 10, 0, Integer.MAX_VALUE);
+        return FuncAlgorithms.getValueWithDefault(inputToolCoolingDownTime.getText(), 10, 0, Integer.MAX_VALUE);
     }
 
     public double getInputHallPositionX() {
-        return getValueWithDefault(inputHallPositionX.getText(), inventorySlotsIn.player.getPosition().getX(), -30000000.0d, 30000000.0d);
+        return FuncAlgorithms.getValueWithDefault(inputHallPositionX.getText(), inventorySlotsIn.player.getPosition().getX(), -30000000.0d, 30000000.0d);
 
     }
 
     public double getInputHallPositionY() {
-        return getValueWithDefault(inputHallPositionY.getText(), inventorySlotsIn.player.getPosition().getY(), 0.0d, 256.0d);
+        return FuncAlgorithms.getValueWithDefault(inputHallPositionY.getText(), inventorySlotsIn.player.getPosition().getY(), 0.0d, 256.0d);
     }
 
     public double getInputHallPositionZ() {
-        return getValueWithDefault(inputHallPositionZ.getText(), inventorySlotsIn.player.getPosition().getZ(), -30000000.0d, 30000000.0d);
+        return FuncAlgorithms.getValueWithDefault(inputHallPositionZ.getText(), inventorySlotsIn.player.getPosition().getZ(), -30000000.0d, 30000000.0d);
     }
 
     public GameType getButtonDefaultGameMode() {
@@ -273,35 +289,6 @@ public class GuiContainerSettings extends GuiContainer {
         return this.playingGameMode;
     }
 
-    public int getValueWithDefault(String text, int _default, int min, int max) {
-        int num;
-        try {
-            num = Integer.parseInt(text);
-        } catch (Exception e) {
-            num = _default;
-        }
-        if (num < min) {
-            num = min;
-        } else if (num > max) {
-            num = max;
-        }
-        return num;
-    }
-
-    public double getValueWithDefault(String text, double _default, double min, double max) {
-        double num;
-        try {
-            num = Double.parseDouble(text);
-        } catch (Exception e) {
-            num = _default;
-        }
-        if (num < min) {
-            num = min;
-        } else if (num > max) {
-            num = max;
-        }
-        return num;
-    }
 
     private void drawSelectButton() {
         buttonDefaultGameMode.displayString = String.format("%s: %s", Translation.defaultGameMode, I18n.format("gameMode." + defaultGameMode.getName()));

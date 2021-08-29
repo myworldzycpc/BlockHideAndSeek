@@ -1,11 +1,12 @@
 package io.github.myworldzycpc.block_has.network;
 
 import io.github.myworldzycpc.block_has.Main;
+import io.github.myworldzycpc.block_has.client.gui.GuiContainerAddMap;
 import io.github.myworldzycpc.block_has.client.gui.GuiContainerSettings;
-import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -21,20 +22,31 @@ public class Handler implements IMessageHandler<MessageSettings, IMessage> {
 
         if (ctx.side == Side.SERVER) {
 
-            EntityPlayer player = ctx.getServerHandler().player;
+            EntityPlayerMP player = ctx.getServerHandler().player;
 
             if (player.isServerWorld()) {
+                String operation = message.nbt.getString("operation");
                 WorldServer worldServer = (WorldServer) player.world;
-                NBTTagCompound settingsCompound = (NBTTagCompound) message.nbt.getTag("settings");
-                SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldServer);
-                NBTTagCompound oldSettingsCompound = (NBTTagCompound) BlockHasSettingsGlobal.writeToNBT(new NBTTagCompound()).getTag("settings");
 
-                if (!(oldSettingsCompound.toString().equals(settingsCompound.toString()))) {
+                if (operation.equals("update_settings_data")) {
+                    NBTTagCompound settingsCompound = (NBTTagCompound) message.nbt.getTag("settings");
+                    SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldServer);
+                    NBTTagCompound oldSettingsCompound = (NBTTagCompound) BlockHasSettingsGlobal.writeToNBT(new NBTTagCompound()).getTag("settings");
+
+                    if (!(oldSettingsCompound.toString().equals(settingsCompound.toString()))) {
 //                    FuncOperation.debugInfo(worldServer, String.valueOf(settingsCompound.getInteger("timeForHunterToWait")));
-                    BlockHasSettingsGlobal.readFromNBT(message.nbt);
-                    NetworkLoader.instance.sendToAll(message);
-                }
+                        BlockHasSettingsGlobal.readFromNBT(message.nbt);
+                        NetworkLoader.instance.sendToAll(message);
+                    }
 
+                } else if (operation.equals("open_gui")) {
+                    MessageSettings messageBack = new MessageSettings();
+                    messageBack.nbt = new NBTTagCompound();
+                    SettingsWorldSavedData.getGlobal(worldServer).writeToNBT(messageBack.nbt);
+                    messageBack.nbt.setString("operation", "open_gui");
+                    messageBack.nbt.setInteger("guiId", message.nbt.getInteger("guiId"));
+                    NetworkLoader.instance.sendTo(messageBack, player);
+                }
             }
 
         } else if (ctx.side == Side.CLIENT) {
@@ -46,15 +58,16 @@ public class Handler implements IMessageHandler<MessageSettings, IMessage> {
                     if (operation.equals("open_gui")) {
                         EntityPlayer player = Minecraft.getMinecraft().player;
                         SettingsWorldSavedData.getGlobal(player.world).readFromNBT(message.nbt);
-
+//                        player.closeScreen();
                         BlockPos pos = player.getPosition();
-                        int id = GuiElementLoader.GUI_SETTINGS;
+                        int id = message.nbt.getInteger("guiId");
                         player.openGui(Main.instance, id, player.world, pos.getX(), pos.getY(), pos.getZ());
                     } else if (operation.equals("update_settings_data")) {
                         EntityPlayer player = Minecraft.getMinecraft().player;
                         SettingsWorldSavedData.getGlobal(player.world).readFromNBT(message.nbt);
 
                         GuiContainerSettings.needUpdate = true;
+                        GuiContainerAddMap.needUpdate = true;
                     }
                 }
             });

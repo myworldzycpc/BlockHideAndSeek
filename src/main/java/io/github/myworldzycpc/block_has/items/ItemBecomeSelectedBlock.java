@@ -1,11 +1,12 @@
 package io.github.myworldzycpc.block_has.items;
 
 import io.github.myworldzycpc.block_has.Main;
-import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.func.FuncOperation;
+import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -53,7 +54,7 @@ public class ItemBecomeSelectedBlock extends Item implements IHasModel {
                 blockNameShow = facingBlockItem.getItemStackDisplayName(facingBlockItemStack);
             }
 
-            FuncOperation.message(player, String.format("\u00a76\u4f60\u53d8\u6210\u4e86 \u00a74%s", blockNameShow));
+            FuncOperation.message(player, I18n.format("item.become_selected_block.become", blockNameShow));
         }
 
         return EnumActionResult.PASS;

@@ -5,6 +5,7 @@ import io.github.myworldzycpc.block_has.func.FuncOperation;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import io.github.myworldzycpc.block_has.util.Reference;
+import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 
 import java.util.Timer;
@@ -37,7 +37,7 @@ public class ItemBlockHas extends Item implements IHasModel {
 
         if (!worldIn.isRemote) {
 
-            playerIn.setGameType(GameType.ADVENTURE);
+            playerIn.setGameType(SettingsWorldSavedData.getGlobal(worldIn).getPlayingGameMode());
             playerIn.inventory.clear();
 
             (new Timer()).schedule(new TimerTask() {

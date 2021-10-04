@@ -16,5 +16,7 @@ public class ModItems {
     public static final Item DEBUG = new ItemDebug();
     public static final Item BECOME_SELECTED_BLOCK = new ItemBecomeSelectedBlock();
     public static final Item SETTINGS = new ItemSettings();
+    public static final Item FORCE_END = new ItemForceEnd();
+    public static final Item ALIGN_TO_GRID = new ItemAlignToGrid();
 
 }

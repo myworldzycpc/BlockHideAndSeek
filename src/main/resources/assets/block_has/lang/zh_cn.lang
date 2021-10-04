@@ -6,6 +6,8 @@ item.debug.name=调试物品
 item.become_selected_block.name=变成选中的方块
 item.become_selected_block.become=你变成了 %s
 item.settings.name=设置
+item.force_end.name=强制结束
+item.align_to_grid.name=与网格对齐
 
 itemGroup.item_tab=方块躲猫猫
 
@@ -28,3 +30,18 @@ block_has.container.settings.remove_map=删除地图
 block_has.container.settings.get_to_there=传送到那里
 block_has.container.settings.select_map_first=请先选择一张地图
 block_has.container.settings.unnamed=未命名
+
+block_has.chat.player_ready=玩家准备
+block_has.chat.player_all_ready=所有玩家已准备好
+block_has.chat.player_only_one=但是只有一个玩家，游戏无法开始。
+block_has.chat.not_enough_hunters=但是猎人不够，游戏无法开始。
+block_has.chat.you_are_block=你是方块，请避免被猎人找到
+block_has.chat.you_are_hunter=你是猎人，请等待%s秒
+block_has.chat.time_out=时间到，去找出伪装成方块的玩家吧
+block_has.chat.hunter_is_coming=猎人已出场，方块们小心了
+block_has.chat.you_are_not_hunter=你不是猎人，不能击杀
+block_has.chat.target_is_not_hider=对方不是方块，不能击杀
+block_has.chat.all_hider_found=所有方块都被找到，游戏结束
+block_has.chat.was_killed=%s被%s击杀，请大家小心
+
+

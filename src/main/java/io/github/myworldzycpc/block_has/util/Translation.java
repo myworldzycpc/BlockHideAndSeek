@@ -3,27 +3,31 @@ package io.github.myworldzycpc.block_has.util;
 import net.minecraft.client.resources.I18n;
 
 public class Translation {
-    public static String titleGui = I18n.format("block_has.container.settings");
-    public static String titleTimeForHunterToWait = I18n.format("block_has.container.settings.time_for_hunter_to_wait");
-    public static String titleNumberOfHunters = I18n.format("block_has.container.settings.number_of_hunters");
-    public static String titleToolCoolingDownTime = I18n.format("block_has.container.settings.tool_cooling_down_time");
-    public static String titleHallPosition = I18n.format("block_has.container.settings.hall_position");
 
-    public static String defaultGameMode = I18n.format("block_has.container.settings.default_game_mode");
-    public static String playingGameMode = I18n.format("block_has.container.settings.playing_game_mode");
+    public static String titleGui;
+    public static String titleTimeForHunterToWait;
+    public static String titleNumberOfHunters;
+    public static String titleToolCoolingDownTime;
+    public static String titleHallPosition;
 
-    public static String addMap = I18n.format("block_has.container.settings.add_map");
-    public static String removeMap = I18n.format("block_has.container.settings.remove_map");
-    public static String mapName = I18n.format("block_has.container.settings.map_name");
-    public static String mapSpawnPoint = I18n.format("block_has.container.settings.map_spawn_point");
-    public static String selectMapFirst = I18n.format("block_has.container.settings.select_map_first");
-    public static String getToThere = I18n.format("block_has.container.settings.get_to_there");
-    public static String unnamed = I18n.format("block_has.container.settings.unnamed");
+    public static String defaultGameMode;
+    public static String playingGameMode;
 
-    public static String survivalMode = I18n.format("gameMode.survival");
-    public static String creativeMode = I18n.format("gameMode.creative");
-    public static String adventureMode = I18n.format("gameMode.adventure");
-    public static String spectatorMode = I18n.format("gameMode.spectator");
+    public static String addMap;
+    public static String removeMap;
+    public static String mapName;
+    public static String mapSpawnPoint;
+    public static String selectMapFirst;
+    public static String getToThere;
+    public static String unnamed;
+
+    public static String survivalMode;
+    public static String creativeMode;
+    public static String adventureMode;
+    public static String spectatorMode;
+
+    public static String playerReady;
+    public static String playerAllReady;
 
     public static void update() {
 
@@ -49,6 +53,8 @@ public class Translation {
         adventureMode = I18n.format("gameMode.adventure");
         spectatorMode = I18n.format("gameMode.spectator");
 
+        playerReady = I18n.format("block_has.chat.player_ready");
+        playerAllReady = I18n.format("block_has.chat.player_all_ready");
     }
 
 }

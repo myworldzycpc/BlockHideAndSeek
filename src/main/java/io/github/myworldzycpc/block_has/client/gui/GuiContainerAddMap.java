@@ -181,7 +181,7 @@ public class GuiContainerAddMap extends GuiContainer {
         if (button.id == BUTTON_ADD_MAP) {
             Translation.update();
             BlockPos pos = this.inventorySlotsIn.player.getPosition();
-            BlockHasMap blockHasMap = new BlockHasMap(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), String.valueOf(FuncAlgorithms.getNextId()));
+            BlockHasMap blockHasMap = new BlockHasMap(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Translation.unnamed);
             BlockHasSettingsGlobal.addBlockHasMap(blockHasMap);
             this.updateSettingsData();
             this.updateInputsValue();

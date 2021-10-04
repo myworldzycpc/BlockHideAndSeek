@@ -1,5 +1,9 @@
 package io.github.myworldzycpc.block_has.func;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class FuncAlgorithms {
 
     public static int nextId = 0;
@@ -38,5 +42,18 @@ public class FuncAlgorithms {
         return num;
     }
 
+    public static <T> List<T> extract(int count, List<T> list) {
+        List<Integer> givenList = new ArrayList<Integer>();
+        for (int i = 0; i < list.size(); i++) {
+            givenList.add(i);
+        }
+        Collections.shuffle(givenList);
 
+        List<Integer> randomSeries = givenList.subList(0, count);
+        List<T> randomObjects = new ArrayList<T>();
+        for (Integer i : randomSeries) {
+            randomObjects.add(list.get(i));
+        }
+        return randomObjects;
+    }
 }

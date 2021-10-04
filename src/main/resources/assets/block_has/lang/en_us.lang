@@ -6,6 +6,8 @@ item.debug.name=Debug Item
 item.become_selected_block.name=Become Selected Block
 item.become_selected_block.become=You have become %s
 item.settings.name=Settings
+item.force_end.name=Force End
+item.align_to_grid.name=Align To Grid
 
 itemGroup.item_tab=Block Hide And See
 
@@ -28,3 +30,16 @@ block_has.container.settings.remove_map=Remove Map
 block_has.container.settings.get_to_there=Get To There
 block_has.container.settings.select_map_first=Please select a map first
 block_has.container.settings.unnamed=Unnamed
+
+block_has.chat.player_ready=Player ready
+block_has.chat.player_all_ready=All players are ready
+block_has.chat.player_only_one=But with only one player, the game can't start.
+block_has.chat.not_enough_hunters=But there are not enough hunters. The game can't start.
+block_has.chat.you_are_block=You are a block. Please avoid being found by hunters
+block_has.chat.you_are_hunter=You're a hunter. Please wait %s second
+block_has.chat.time_out=Time out, Go find the player disguised as a block
+block_has.chat.hunter_is_coming=The hunter has come out. Be careful
+block_has.chat.you_are_not_hunter=You're not a hunter. You can't kill
+block_has.chat.target_is_not_hider=The opponent is not a hider and cannot be killed
+block_has.chat.all_hider_found=All the hiders are found and the game is over
+block_has.chat.was_killed=%s was killed by %s. please be careful

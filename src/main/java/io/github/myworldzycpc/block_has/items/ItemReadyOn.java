@@ -1,8 +1,11 @@
 package io.github.myworldzycpc.block_has.items;
 
 import io.github.myworldzycpc.block_has.Main;
+import io.github.myworldzycpc.block_has.func.FuncFragment;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.IHasModel;
+import io.github.myworldzycpc.block_has.util.Reference;
+import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,7 +20,9 @@ public class ItemReadyOn extends Item implements IHasModel {
 
         setTranslationKey("ready_on");
         setRegistryName("ready_on");
-        setCreativeTab(Main.ITEM_TAB);
+        if (Reference.DEBUG_MODE) {
+            setCreativeTab(Main.ITEM_TAB);
+        }
 
         ModItems.ITEMS.add(this);
 
@@ -28,6 +33,11 @@ public class ItemReadyOn extends Item implements IHasModel {
      */
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 
+        if (!worldIn.isRemote) {
+            PlayingWorldSavedData.getGlobal(worldIn).getPlayer(playerIn.getUniqueID()).setReady(false);
+            PlayingWorldSavedData.getGlobal(worldIn).markDirty();
+            FuncFragment.detectForReady(worldIn);
+        }
         playerIn.setHeldItem(handIn, new ItemStack(ModItems.READY_OFF));
 
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));

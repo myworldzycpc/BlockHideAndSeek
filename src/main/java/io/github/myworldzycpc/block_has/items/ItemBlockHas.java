@@ -5,6 +5,7 @@ import io.github.myworldzycpc.block_has.func.FuncOperation;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import io.github.myworldzycpc.block_has.util.Reference;
+import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -36,18 +38,31 @@ public class ItemBlockHas extends Item implements IHasModel {
         GameRules gamerules = worldIn.getGameRules();
 
         if (!worldIn.isRemote) {
-
-            playerIn.setGameType(SettingsWorldSavedData.getGlobal(worldIn).getPlayingGameMode());
-            playerIn.inventory.clear();
+            SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
+            PlayingWorldSavedData blockHasPlayingGlobal = PlayingWorldSavedData.getGlobal(worldIn);
+            Vec3d hallPosition = BlockHasSettingsGlobal.getHallPosition();
+            for (EntityPlayer player : worldIn.playerEntities) {
+                player.setGameType(SettingsWorldSavedData.getGlobal(worldIn).getPlayingGameMode());
+                player.inventory.clear();
+                player.setPosition(hallPosition.x, hallPosition.y, hallPosition.z);
+            }
+            blockHasPlayingGlobal.setPlaying("ready");
+            blockHasPlayingGlobal.setHunterWaitingTime(-1);
 
             (new Timer()).schedule(new TimerTask() {
                 public void run() {
                     FuncOperation.debugInfo(worldIn, "Thread Timer ran.");
-                    playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.READY_OFF));
-                    if (!Reference.DEBUG_MODE) {
-                        gamerules.setOrCreateGameRule("sendCommandFeedback", "false");
-                    } else {
-                        gamerules.setOrCreateGameRule("sendCommandFeedback", "true");
+
+                    if (!blockHasPlayingGlobal.getPlaying().equals("endGame")) {
+                        for (EntityPlayer player : worldIn.playerEntities) {
+                            player.inventory.addItemStackToInventory(new ItemStack(ModItems.READY_OFF));
+                            player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
+                        }
+                        if (!Reference.DEBUG_MODE) {
+                            gamerules.setOrCreateGameRule("sendCommandFeedback", "false");
+                        } else {
+                            gamerules.setOrCreateGameRule("sendCommandFeedback", "true");
+                        }
                     }
                 }
             }, 1000);

@@ -1,10 +1,16 @@
 package io.github.myworldzycpc.block_has.func;
 
 import io.github.myworldzycpc.block_has.util.Reference;
+import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
+import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 public class FuncOperation {
@@ -12,6 +18,69 @@ public class FuncOperation {
 
     public static void message(EntityPlayer player, String text) {
         player.sendStatusMessage(new TextComponentString(text), false);
+    }
+
+    public static void messageTranslation(EntityPlayer player, String text, Object... args) {
+        player.sendStatusMessage(new TextComponentTranslation(text, args), false);
+    }
+
+    public static void messageAll(World worldIn, String text) {
+        for (EntityPlayer playerIn : worldIn.playerEntities) {
+            message(playerIn, text);
+        }
+    }
+
+    public static void messageAllTranslation(World worldIn, String text, Object... args) {
+        for (EntityPlayer playerIn : worldIn.playerEntities) {
+            messageTranslation(playerIn, text, args);
+        }
+    }
+
+    public static void actionbar(EntityPlayer player, String text) {
+        player.sendStatusMessage(new TextComponentString(text), true);
+    }
+
+    public static void actionbarAll(World worldIn, String text) {
+        for (EntityPlayer playerIn : worldIn.playerEntities) {
+            actionbar(playerIn, text);
+        }
+    }
+
+    public static void debugInfo(World worldIn, String text) {
+        System.out.println(text);
+        if (Reference.DEBUG_MODE) {
+            messageAll(worldIn, String.format("\u00a7a[DEBUG] %s", text));
+        }
+    }
+
+    public static void title(EntityPlayer player, String text) {
+        if (player instanceof EntityPlayerMP) {
+            EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            SPacketTitle.Type sPacketTitle$type = SPacketTitle.Type.TITLE;
+            SPacketTitle sPacketTitle1 = new SPacketTitle(sPacketTitle$type, new TextComponentString(text));
+            entityplayermp.connection.sendPacket(sPacketTitle1);
+        }
+    }
+
+    public static void titleTranslation(EntityPlayer player, String text, Object... args) {
+        if (player instanceof EntityPlayerMP) {
+            EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            SPacketTitle.Type sPacketTitle$type = SPacketTitle.Type.TITLE;
+            SPacketTitle sPacketTitle1 = new SPacketTitle(sPacketTitle$type, new TextComponentTranslation(text, args));
+            entityplayermp.connection.sendPacket(sPacketTitle1);
+        }
+    }
+
+    public static void titleAll(World worldIn, String text) {
+        for (EntityPlayer playerIn : worldIn.playerEntities) {
+            title(playerIn, text);
+        }
+    }
+
+    public static void titleAllTranslation(World worldIn, String text, Object... args) {
+        for (EntityPlayer playerIn : worldIn.playerEntities) {
+            titleTranslation(playerIn, text, args);
+        }
     }
 
     public static int executeCommand(EntityPlayer playerIn, String command) {
@@ -27,17 +96,15 @@ public class FuncOperation {
         return status_code;
     }
 
-    public static void messageAll(World worldIn, String text) {
-        for (EntityPlayer playerIn : worldIn.playerEntities) {
-            message(playerIn, text);
+    public static void teleportPlayer(EntityPlayer player, Vec3d pos) {
+        if (player instanceof EntityPlayerMP) {
+            ((EntityPlayerMP) player).connection.setPlayerLocation(pos.x, pos.y, pos.z, player.rotationYaw, player.rotationPitch);
         }
     }
 
-    public static void debugInfo(World worldIn, String text) {
-        System.out.println(text);
-        if (Reference.DEBUG_MODE) {
-            messageAll(worldIn, String.format("\u00a7a[DEBUG] %s", text));
-        }
+    public static void dirtyAll(World worldIn) {
+        PlayingWorldSavedData blockHasPlayingGlobal = PlayingWorldSavedData.getGlobal(worldIn);
+        SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
     }
 
 }

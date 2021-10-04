@@ -5,6 +5,7 @@ import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.proxy.CommonProxy;
 import io.github.myworldzycpc.block_has.tabs.ItemTab;
 import io.github.myworldzycpc.block_has.util.Reference;
+import io.github.myworldzycpc.block_has.util.Translation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -25,6 +26,7 @@ public class Main {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         new NetworkLoader(event);
+        Translation.update();
     }
 
     @Mod.EventHandler

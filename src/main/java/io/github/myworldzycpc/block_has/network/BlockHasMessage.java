@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public class MessageSettings implements IMessage {
+public class BlockHasMessage implements IMessage {
     public NBTTagCompound nbt;
 
     @Override

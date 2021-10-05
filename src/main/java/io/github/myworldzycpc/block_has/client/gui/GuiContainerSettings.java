@@ -3,7 +3,7 @@ package io.github.myworldzycpc.block_has.client.gui;
 import io.github.myworldzycpc.block_has.func.FuncAlgorithms;
 import io.github.myworldzycpc.block_has.inventory.ContainerSettings;
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
-import io.github.myworldzycpc.block_has.network.MessageSettings;
+import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.util.Translation;
@@ -148,7 +148,7 @@ public class GuiContainerSettings extends GuiContainer {
             this.drawSelectButton();
             updateSettingsData();
         } else if (button.id == BUTTON_ADD_MAP) {
-            MessageSettings message = new MessageSettings();
+            BlockHasMessage message = new BlockHasMessage();
             message.nbt = new NBTTagCompound();
             message.nbt.setString("operation", "open_gui");
             message.nbt.setInteger("guiId", GuiElementLoader.GUI_ADD_MAP);
@@ -227,7 +227,7 @@ public class GuiContainerSettings extends GuiContainer {
                 getButtonDefaultGameMode(),
                 getButtonPlayingGameMode()
         );
-        MessageSettings message = new MessageSettings();
+        BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
         SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).writeToNBT(message.nbt);
 

@@ -34,12 +34,12 @@ public class ItemReadyOff extends Item implements IHasModel {
      */
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 
+        playerIn.setHeldItem(handIn, new ItemStack(ModItems.READY_ON));
         if (!worldIn.isRemote) {
             PlayingWorldSavedData.getGlobal(worldIn).getPlayer(playerIn.getUniqueID()).setReady(true);
             PlayingWorldSavedData.getGlobal(worldIn).markDirty();
             FuncFragment.detectForReady(worldIn);
         }
-        playerIn.setHeldItem(handIn, new ItemStack(ModItems.READY_ON));
 
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }

@@ -7,6 +7,8 @@ import io.github.myworldzycpc.block_has.util.Translation;
 import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -47,15 +49,19 @@ public class FuncFragment {
                 for (EntityPlayer player : hunters) {
                     blockHasPlayingGlobal.getPlayer(player).setStatus(BlockHasPlayer.Status.HUNTER);
                     FuncOperation.messageTranslation(player, "block_has.chat.you_are_hunter", blockHasSettingsGlobal.getTimeForHunterToWait());
-                    player.inventory.clearMatchingItems(ModItems.READY_ON, -1, 0, null);
                 }
                 for (EntityPlayer player : worldIn.playerEntities) {
+                    player.inventory.clear();
+
                     if (blockHasPlayingGlobal.getPlayer(player).getStatus() == BlockHasPlayer.Status.HIDER) {
                         FuncOperation.teleportPlayer(player, blockHasMap.spawnPoint);
                         FuncOperation.title(player, blockHasMap.mapName);
                         FuncOperation.messageTranslation(player, "block_has.chat.you_are_block");
+                        for (Item item : Arrays.asList(ModItems.BECOME_SELECTED_BLOCK, ModItems.ALIGN_TO_GRID)) {
+                            player.inventory.addItemStackToInventory(new ItemStack(item));
+                        }
                     }
-                    player.inventory.clearMatchingItems(ModItems.READY_ON, -1, 0, null);
+                    player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
                 }
                 blockHasPlayingGlobal.setHunterWaitingTime(blockHasSettingsGlobal.getTimeForHunterToWait());
                 startHuntersWaiting(worldIn, blockHasMap);

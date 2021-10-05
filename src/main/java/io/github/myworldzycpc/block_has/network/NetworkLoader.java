@@ -15,8 +15,8 @@ public class NetworkLoader {
     private static int nextID = 0;
 
     public NetworkLoader(FMLPreInitializationEvent event) {
-        registerMessage(Handler.class, MessageSettings.class, Side.CLIENT);
-        registerMessage(Handler.class, MessageSettings.class, Side.SERVER);
+        registerMessage(Handler.class, BlockHasMessage.class, Side.CLIENT);
+        registerMessage(Handler.class, BlockHasMessage.class, Side.SERVER);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

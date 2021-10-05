@@ -3,7 +3,7 @@ package io.github.myworldzycpc.block_has.client.gui;
 import io.github.myworldzycpc.block_has.func.FuncAlgorithms;
 import io.github.myworldzycpc.block_has.inventory.ContainerAddMap;
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
-import io.github.myworldzycpc.block_has.network.MessageSettings;
+import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.BlockHasMap;
 import io.github.myworldzycpc.block_has.util.Reference;
@@ -67,9 +67,9 @@ public class GuiContainerAddMap extends GuiContainer {
     private GuiButton buttonGetToThere;
     private GuiButton buttonRemoveMap;
 
-    private int SelectingMapButtonId = -1;
-    private int SelectingMapButtonIndex = -1;
-    private int SelectingMapIndex = -1;
+    private int selectingMapButtonId = -1;
+    private int selectingMapButtonIndex = -1;
+    private int selectingMapIndex = -1;
     private int roll = 0;
 
     public GuiContainerAddMap(ContainerAddMap inventorySlotsIn) {
@@ -112,7 +112,7 @@ public class GuiContainerAddMap extends GuiContainer {
         this.fontRenderer.drawString(Translation.addMap, (this.xSize - this.fontRenderer.getStringWidth(Translation.addMap)) / 2, 6, 0x404040);
         int x;
         int y;
-        if (this.SelectingMapButtonId == -1) {
+        if (this.selectingMapButtonId == -1) {
             int rightWidth = this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6;
             int rightHeight = this.ySize - 6 - fontRenderer.FONT_HEIGHT - ELEMENTS_PADDING - 6;
             x = 6 + LIST_WIDTH + ELEMENTS_PADDING + (rightWidth - fontRenderer.getStringWidth(Translation.selectMapFirst)) / 2;
@@ -171,9 +171,9 @@ public class GuiContainerAddMap extends GuiContainer {
         for (int i = 0; i < this.mapButtonList.size(); i++) {
             GuiButton guiButton = this.mapButtonList.get(i);
             if (button.id == guiButton.id) {
-                this.SelectingMapButtonId = guiButton.id;
-                this.SelectingMapButtonIndex = i;
-                this.SelectingMapIndex = i + roll;
+                this.selectingMapButtonId = guiButton.id;
+                this.selectingMapButtonIndex = i;
+                this.selectingMapIndex = i + roll;
                 this.updateInputsValue();
             }
         }
@@ -186,20 +186,27 @@ public class GuiContainerAddMap extends GuiContainer {
             this.updateSettingsData();
             this.updateInputsValue();
         } else if (button.id == BUTTON_REMOVE_MAP) {
-            BlockHasSettingsGlobal.removeBlockHasMap(this.SelectingMapIndex);
+            BlockHasSettingsGlobal.removeBlockHasMap(this.selectingMapIndex);
             clearSelect();
             this.updateSettingsData();
             this.updateInputsValue();
         } else if (button.id == BUTTON_GET_TO_THERE) {
-            Vec3d target = BlockHasSettingsGlobal.getBlockHasMaps().get(this.SelectingMapIndex).spawnPoint;
-            this.inventorySlotsIn.player.setPosition(target.x, target.y, target.z);
+            BlockHasMessage message = new BlockHasMessage();
+            message.nbt = new NBTTagCompound();
+            BlockHasSettingsGlobal.writeToNBT(message.nbt);
+
+            message.nbt.setInteger("selectingMapIndex", this.selectingMapIndex);
+            message.nbt.setString("operation", "teleport");
+
+            NetworkLoader.instance.sendToServer(message);
+
         }
     }
 
     private void clearSelect() {
-        this.SelectingMapButtonId = -1;
-        this.SelectingMapButtonIndex = -1;
-        this.SelectingMapIndex = -1;
+        this.selectingMapButtonId = -1;
+        this.selectingMapButtonIndex = -1;
+        this.selectingMapIndex = -1;
     }
 
     /**
@@ -247,7 +254,7 @@ public class GuiContainerAddMap extends GuiContainer {
         super.onGuiClosed();
         Keyboard.enableRepeatEvents(false);
         updateSettingsData();
-        MessageSettings message = new MessageSettings();
+        BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
         message.nbt.setString("operation", "open_gui");
         message.nbt.setInteger("guiId", GuiElementLoader.GUI_SETTINGS);
@@ -296,7 +303,7 @@ public class GuiContainerAddMap extends GuiContainer {
     public void updateSettingsData() {
         SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
         BlockPos pos = this.inventorySlotsIn.player.getPosition();
-        if (this.SelectingMapButtonId != -1) {
+        if (this.selectingMapButtonId != -1) {
             BlockHasMap blockHasMap = new BlockHasMap(
                     new Vec3d(
                             FuncAlgorithms.getValueWithDefault(this.inputSpawnPointX.getText(), pos.getX(), -30000000.0d, 30000000.0d),
@@ -305,9 +312,9 @@ public class GuiContainerAddMap extends GuiContainer {
                     ),
                     this.inputName.getText()
             );
-            BlockHasSettingsGlobal.setBlockHasMap(blockHasMap, this.SelectingMapIndex);
+            BlockHasSettingsGlobal.setBlockHasMap(blockHasMap, this.selectingMapIndex);
         }
-        MessageSettings message = new MessageSettings();
+        BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
         BlockHasSettingsGlobal.writeToNBT(message.nbt);
 
@@ -324,16 +331,16 @@ public class GuiContainerAddMap extends GuiContainer {
         this.buttonGetToThere.displayString = Translation.getToThere;
         this.buttonRemoveMap.displayString = Translation.removeMap;
 
-        this.buttonRemoveMap.visible = !(this.SelectingMapButtonId == -1);
-        this.buttonGetToThere.visible = !(this.SelectingMapButtonId == -1);
-        this.inputName.setVisible(!(this.SelectingMapButtonId == -1));
-        this.inputSpawnPointX.setVisible(!(this.SelectingMapButtonId == -1));
-        this.inputSpawnPointY.setVisible(!(this.SelectingMapButtonId == -1));
-        this.inputSpawnPointZ.setVisible(!(this.SelectingMapButtonId == -1));
+        this.buttonRemoveMap.visible = !(this.selectingMapButtonId == -1);
+        this.buttonGetToThere.visible = !(this.selectingMapButtonId == -1);
+        this.inputName.setVisible(!(this.selectingMapButtonId == -1));
+        this.inputSpawnPointX.setVisible(!(this.selectingMapButtonId == -1));
+        this.inputSpawnPointY.setVisible(!(this.selectingMapButtonId == -1));
+        this.inputSpawnPointZ.setVisible(!(this.selectingMapButtonId == -1));
 
         List<BlockHasMap> blockHasMaps = BlockHasSettingsGlobal.getBlockHasMaps();
 
-        if (this.SelectingMapIndex >= blockHasMaps.size()) {
+        if (this.selectingMapIndex >= blockHasMaps.size()) {
             clearSelect();
         }
 
@@ -349,13 +356,13 @@ public class GuiContainerAddMap extends GuiContainer {
         }
 
         for (MapSelectButton mapSelectButton : this.mapButtonList) {
-            mapSelectButton.selected = mapSelectButton.id == this.SelectingMapButtonId - this.roll;
+            mapSelectButton.selected = mapSelectButton.id == this.selectingMapButtonId - this.roll;
             mapSelectButton.visible = false;
         }
 
         for (int i = 0; i < blockHasMaps.size(); i++) {
             BlockHasMap blockHasMap = blockHasMaps.get(i);
-            if (i == this.SelectingMapIndex) {
+            if (i == this.selectingMapIndex) {
                 this.inputName.setText(blockHasMap.mapName);
                 this.inputSpawnPointX.setText(String.valueOf(blockHasMap.spawnPoint.x));
                 this.inputSpawnPointY.setText(String.valueOf(blockHasMap.spawnPoint.y));

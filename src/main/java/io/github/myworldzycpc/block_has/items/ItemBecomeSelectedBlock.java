@@ -6,7 +6,6 @@ import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +15,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class ItemBecomeSelectedBlock extends Item implements IHasModel {
@@ -34,7 +36,7 @@ public class ItemBecomeSelectedBlock extends Item implements IHasModel {
      */
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if (!worldIn.isRemote){
+        if (!worldIn.isRemote) {
             UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
             Block facingBlock = worldIn.getBlockState(pos).getBlock();
             IBlockState facingBlockState = worldIn.getBlockState(pos);
@@ -43,18 +45,34 @@ public class ItemBecomeSelectedBlock extends Item implements IHasModel {
             Item facingBlockItem = Item.getItemFromBlock(facingBlock);
             String facingBlockItemName = facingBlockItem.getRegistryName().toString();
             ItemStack facingBlockItemStack = new ItemStack(facingBlockItem, 1, facingBlockStateMeta);
-
+            List<String> bannedBlocks = new ArrayList<String>(Arrays.asList(
+                    "minecraft:tallgrass",
+                    "minecraft:double_plant",
+                    "minecraft:fire",
+                    "minecraft:barrier",
+                    "minecraft:water",
+                    "minecraft:lava",
+                    "minecraft:redstone_wire",
+                    "minecraft:standing_sign",
+                    "minecraft:wall_sign",
+                    "minecraft:standing_banner",
+                    "minecraft:wall_banner",
+                    "minecraft:skull"
+            ));
             String blockNameShow;
 
-            FuncOperation.executeCommand(player, String.format("morph %s block {Meta:%db, Block:\"%s\", Name:\"block\"}", uuid.toString(), facingBlockStateMeta, facingBlockName));
-
-            if (facingBlockItemName.equals("minecraft:air")){
+            if (facingBlockItemName.equals("minecraft:air")) {
                 blockNameShow = facingBlock.getLocalizedName();
             } else {
                 blockNameShow = facingBlockItem.getItemStackDisplayName(facingBlockItemStack);
             }
 
-            FuncOperation.message(player, I18n.format("item.become_selected_block.become", blockNameShow));
+            if (!bannedBlocks.contains(facingBlockName)) {
+                FuncOperation.executeCommand(player, String.format("morph %s block {Meta:%db, Block:\"%s\", Name:\"block\"}", uuid.toString(), facingBlockStateMeta, facingBlockName));
+                FuncOperation.messageTranslation(player, "block_has.chat.become_selected_block.become", blockNameShow);
+            } else {
+                FuncOperation.messageTranslation(player, "block_has.chat.become_selected_block.cant_become", blockNameShow);
+            }
         }
 
         return EnumActionResult.PASS;

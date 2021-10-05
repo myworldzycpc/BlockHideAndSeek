@@ -3,7 +3,7 @@ package io.github.myworldzycpc.block_has.items;
 import io.github.myworldzycpc.block_has.Main;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
-import io.github.myworldzycpc.block_has.network.MessageSettings;
+import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
@@ -33,7 +33,7 @@ public class ItemSettings extends Item implements IHasModel {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 
         if (!worldIn.isRemote) {
-            MessageSettings message = new MessageSettings();
+            BlockHasMessage message = new BlockHasMessage();
             message.nbt = new NBTTagCompound();
             SettingsWorldSavedData.getGlobal(worldIn).writeToNBT(message.nbt);
             message.nbt.setString("operation", "open_gui");

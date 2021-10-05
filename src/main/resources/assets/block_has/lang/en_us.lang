@@ -4,7 +4,6 @@ item.ready_on.name=Ready On
 item.ready_off.name=Ready Off
 item.debug.name=Debug Item
 item.become_selected_block.name=Become Selected Block
-item.become_selected_block.become=You have become %s
 item.settings.name=Settings
 item.force_end.name=Force End
 item.align_to_grid.name=Align To Grid
@@ -31,6 +30,8 @@ block_has.container.settings.get_to_there=Get To There
 block_has.container.settings.select_map_first=Please select a map first
 block_has.container.settings.unnamed=Unnamed
 
+block_has.chat.become_selected_block.become=You have become %s
+block_has.chat.become_selected_block.cant_become=You can't become %s
 block_has.chat.player_ready=Player ready
 block_has.chat.player_all_ready=All players are ready
 block_has.chat.player_only_one=But with only one player, the game can't start.

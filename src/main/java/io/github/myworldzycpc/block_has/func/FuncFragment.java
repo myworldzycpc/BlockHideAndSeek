@@ -26,6 +26,8 @@ public class FuncFragment {
             Vec3d hallPosition = blockHasSettingsGlobal.getHallPosition();
             player.inventory.clear();
             FuncOperation.teleportPlayer(player, hallPosition);
+            UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
+            FuncOperation.executeCommand(player, String.format("morph %s", uuid.toString()));
         }
         blockHasPlayingGlobal.setPlayers(new ArrayList<BlockHasPlayer>());
     }
@@ -61,7 +63,8 @@ public class FuncFragment {
                             player.inventory.addItemStackToInventory(new ItemStack(item));
                         }
                     }
-                    player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
+                    player.inventory.setInventorySlotContents(8, new ItemStack(ModItems.FORCE_END));
+//                    player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
                 }
                 blockHasPlayingGlobal.setHunterWaitingTime(blockHasSettingsGlobal.getTimeForHunterToWait());
                 startHuntersWaiting(worldIn, blockHasMap);

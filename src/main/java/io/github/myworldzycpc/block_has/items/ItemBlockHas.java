@@ -56,7 +56,8 @@ public class ItemBlockHas extends Item implements IHasModel {
                     if (!blockHasPlayingGlobal.getPlaying().equals("endGame")) {
                         for (EntityPlayer player : worldIn.playerEntities) {
                             player.inventory.addItemStackToInventory(new ItemStack(ModItems.READY_OFF));
-                            player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
+                            player.inventory.setInventorySlotContents(8, new ItemStack(ModItems.FORCE_END));
+//                            player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
                         }
                         if (!Reference.DEBUG_MODE) {
                             gamerules.setOrCreateGameRule("sendCommandFeedback", "false");

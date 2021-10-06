@@ -56,4 +56,9 @@ public class FuncAlgorithms {
         }
         return randomObjects;
     }
+
+    public static double roundTo(double value, int digit) {
+        return Math.round(value * Math.pow(10, digit)) / Math.pow(10, digit);
+    }
+
 }

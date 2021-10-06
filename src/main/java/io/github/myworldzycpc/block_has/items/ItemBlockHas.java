@@ -44,7 +44,7 @@ public class ItemBlockHas extends Item implements IHasModel {
             for (EntityPlayer player : worldIn.playerEntities) {
                 player.setGameType(SettingsWorldSavedData.getGlobal(worldIn).getPlayingGameMode());
                 player.inventory.clear();
-                player.setPosition(hallPosition.x, hallPosition.y, hallPosition.z);
+                FuncOperation.teleportPlayer(player, hallPosition);
             }
             blockHasPlayingGlobal.setPlaying("ready");
             blockHasPlayingGlobal.setHunterWaitingTime(-1);
@@ -59,11 +59,7 @@ public class ItemBlockHas extends Item implements IHasModel {
                             player.inventory.setInventorySlotContents(8, new ItemStack(ModItems.FORCE_END));
 //                            player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
                         }
-                        if (!Reference.DEBUG_MODE) {
-                            gamerules.setOrCreateGameRule("sendCommandFeedback", "false");
-                        } else {
-                            gamerules.setOrCreateGameRule("sendCommandFeedback", "true");
-                        }
+                        gamerules.setOrCreateGameRule("sendCommandFeedback", Reference.DEBUG_MODE ? "true" : "false");
                     }
                 }
             }, 1000);

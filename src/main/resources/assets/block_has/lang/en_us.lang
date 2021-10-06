@@ -7,6 +7,7 @@ item.become_selected_block.name=Become Selected Block
 item.settings.name=Settings
 item.force_end.name=Force End
 item.align_to_grid.name=Align To Grid
+item.get_the_nearest_hider_distance.name=Get The Nearest Hider Distance
 
 itemGroup.item_tab=Block Hide And See
 
@@ -44,3 +45,6 @@ block_has.chat.you_are_not_hunter=You're not a hunter. You can't kill
 block_has.chat.target_is_not_hider=The opponent is not a hider and cannot be killed
 block_has.chat.all_hider_found=All the hiders are found and the game is over
 block_has.chat.was_killed=%s was killed by %s. please be careful
+block_has.chat.get_the_nearest_hider_distance.get=The box closest to you (%s, %s, %s) is located outside %s
+block_has.chat.get_the_nearest_hider_distance.cooling_down=Tool cooling down time: %s
+block_has.chat.get_the_nearest_hider_distance.regain=The cooling time has expired, and the tool is available again

@@ -5,10 +5,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.UUID;
 
 public class BlockHasPlayer {
-    public UUID playerUUID;
-    public Status status;
-    public int toolCD;
-    public boolean isReady;
+    private UUID playerUUID;
+    private Status status;
+    private int toolCD;
+    private boolean isReady;
 
     public UUID getPlayerUUID() {
         return playerUUID;

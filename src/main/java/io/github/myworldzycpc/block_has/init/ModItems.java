@@ -18,5 +18,6 @@ public class ModItems {
     public static final Item SETTINGS = new ItemSettings();
     public static final Item FORCE_END = new ItemForceEnd();
     public static final Item ALIGN_TO_GRID = new ItemAlignToGrid();
+    public static final Item GET_THE_NEAREST_HIDER_DISTANCE = new ItemGetTheNearestHiderDistance();
 
 }

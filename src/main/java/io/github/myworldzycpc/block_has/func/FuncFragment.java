@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -30,6 +31,9 @@ public class FuncFragment {
             FuncOperation.executeCommand(player, String.format("morph %s", uuid.toString()));
         }
         blockHasPlayingGlobal.setPlayers(new ArrayList<BlockHasPlayer>());
+        GameRules gamerules = worldIn.getGameRules();
+        gamerules.setOrCreateGameRule("sendCommandFeedback", "true");
+
     }
 
     public static void startGame(World worldIn) {
@@ -100,6 +104,27 @@ public class FuncFragment {
                                 FuncOperation.messageTranslation(player, "block_has.chat.hunter_is_coming");
                             }
                         }
+                    }
+                }
+            }
+        }, 1000);
+    }
+
+    public static void startToolCoolingDown(World worldIn, EntityPlayer playerIn) {
+        PlayingWorldSavedData blockHasPlayingGlobal = PlayingWorldSavedData.getGlobal(worldIn);
+        SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
+        BlockHasPlayer blockHasPlayer = blockHasPlayingGlobal.getPlayer(playerIn);
+        (new Timer()).schedule(new TimerTask() {
+            public void run() {
+                FuncOperation.debugInfo(worldIn, "Thread Timer in startToolCoolingDown() ran.");
+                if (!blockHasPlayingGlobal.getPlaying().equals("endGame")) {
+                    if (blockHasPlayer.getToolCD() > 0) {
+                        blockHasPlayer.setToolCD(blockHasPlayer.getToolCD() - 1);
+                        FuncOperation.actionbarTranslation(playerIn, "block_has.chat.get_the_nearest_hider_distance.cooling_down", blockHasPlayer.getToolCD());
+                        startToolCoolingDown(worldIn, playerIn);
+                    } else {
+                        FuncOperation.messageTranslation(playerIn, "block_has.chat.get_the_nearest_hider_distance.regain");
+                        playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.GET_THE_NEAREST_HIDER_DISTANCE));
                     }
                 }
             }

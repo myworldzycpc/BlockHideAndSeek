@@ -40,9 +40,19 @@ public class FuncOperation {
         player.sendStatusMessage(new TextComponentString(text), true);
     }
 
+    public static void actionbarTranslation(EntityPlayer player, String text, Object... args) {
+        player.sendStatusMessage(new TextComponentTranslation(text, args), true);
+    }
+
     public static void actionbarAll(World worldIn, String text) {
         for (EntityPlayer playerIn : worldIn.playerEntities) {
             actionbar(playerIn, text);
+        }
+    }
+
+    public static void actionbarAllTranslation(World worldIn, String text, Object... args) {
+        for (EntityPlayer playerIn : worldIn.playerEntities) {
+            actionbarTranslation(playerIn, text, args);
         }
     }
 

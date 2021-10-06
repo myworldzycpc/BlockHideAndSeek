@@ -7,6 +7,7 @@ item.become_selected_block.name=变成选中的方块
 item.settings.name=设置
 item.force_end.name=强制结束
 item.align_to_grid.name=与网格对齐
+item.get_the_nearest_hider_distance.name=获取最近方块距离
 
 itemGroup.item_tab=方块躲猫猫
 
@@ -44,5 +45,6 @@ block_has.chat.you_are_not_hunter=你不是猎人，不能击杀
 block_has.chat.target_is_not_hider=对方不是方块，不能击杀
 block_has.chat.all_hider_found=所有方块都被找到，游戏结束
 block_has.chat.was_killed=%s被%s击杀，请大家小心
-
-
+block_has.chat.get_the_nearest_hider_distance.get=距离你(%s, %s, %s)最近的方块位于 %s 格外
+block_has.chat.get_the_nearest_hider_distance.cooling_down=工具冷却时间：%s
+block_has.chat.get_the_nearest_hider_distance.regain=冷却时间已到，重新获得工具

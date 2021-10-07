@@ -19,5 +19,6 @@ public class ModItems {
     public static final Item FORCE_END = new ItemForceEnd();
     public static final Item ALIGN_TO_GRID = new ItemAlignToGrid();
     public static final Item GET_THE_NEAREST_HIDER_DISTANCE = new ItemGetTheNearestHiderDistance();
+    public static final Item HICA_SENSOR = new ItemHicaSensor();
 
 }

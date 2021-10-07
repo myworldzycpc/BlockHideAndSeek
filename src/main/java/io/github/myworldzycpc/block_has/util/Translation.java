@@ -2,6 +2,7 @@ package io.github.myworldzycpc.block_has.util;
 
 import net.minecraft.client.resources.I18n;
 
+@Deprecated
 public class Translation {
 
     public static String titleGui;

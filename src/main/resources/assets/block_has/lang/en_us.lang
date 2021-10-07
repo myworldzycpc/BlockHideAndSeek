@@ -8,8 +8,9 @@ item.settings.name=Settings
 item.force_end.name=Force End
 item.align_to_grid.name=Align To Grid
 item.get_the_nearest_hider_distance.name=Get The Nearest Hider Distance
+item.hica_sensor.name=Hica Sensor
 
-itemGroup.item_tab=Block Hide And See
+itemGroup.item_tab=Block Hide And Seek
 
 block_has.container.demo=Demo
 block_has.container.settings=Block Hide And Seek Settings
@@ -21,6 +22,7 @@ block_has.container.settings.tool_cooling_down_time=Tool Cooling Down Time
 block_has.container.settings.tool_cooling_down_time.tooltip=The distance detection tool allows hunters to obtain the distance of the nearest square, but this item cannot be used continuously. It has a cooling time. [Unit: Second] (machine translation)
 block_has.container.settings.hall_position=Waiting Hall Position
 block_has.container.settings.hall_position.tooltip=Position of Waiting Hall
+block_has.container.settings.hica_sensor_sensitivity=Sensitivity Of Hica Sensor
 block_has.container.settings.default_game_mode=Default Game Mode
 block_has.container.settings.playing_game_mode=Game Mode in Playing
 block_has.container.settings.add_map=Add Map
@@ -30,7 +32,9 @@ block_has.container.settings.remove_map=Remove Map
 block_has.container.settings.get_to_there=Get To There
 block_has.container.settings.select_map_first=Please select a map first
 block_has.container.settings.unnamed=Unnamed
+block_has.container.settings.add_banned_block=Add Blocks That Does Not Allow To Become
 
+block_has.chat.block_has=Block Hide And Seek
 block_has.chat.become_selected_block.become=You have become %s
 block_has.chat.become_selected_block.cant_become=You can't become %s
 block_has.chat.player_ready=Player ready
@@ -48,3 +52,7 @@ block_has.chat.was_killed=%s was killed by %s. please be careful
 block_has.chat.get_the_nearest_hider_distance.get=The box closest to you (%s, %s, %s) is located outside %s
 block_has.chat.get_the_nearest_hider_distance.cooling_down=Tool cooling down time: %s
 block_has.chat.get_the_nearest_hider_distance.regain=The cooling time has expired, and the tool is available again
+block_has.chat.end_game=Game Over
+block_has.chat.last_block=The Last Block To Survive:
+block_has.chat.last_hunter=The Hunter Who Found The Last Block:
+block_has.chat.game_time=Game Duration:

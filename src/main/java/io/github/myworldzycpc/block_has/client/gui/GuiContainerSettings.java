@@ -6,7 +6,6 @@ import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
 import io.github.myworldzycpc.block_has.util.Reference;
-import io.github.myworldzycpc.block_has.util.Translation;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -40,9 +39,11 @@ public class GuiContainerSettings extends GuiContainer {
     private static final int INPUT_HALL_POSITION_X = FuncAlgorithms.getNextId();
     private static final int INPUT_HALL_POSITION_Y = FuncAlgorithms.getNextId();
     private static final int INPUT_HALL_POSITION_Z = FuncAlgorithms.getNextId();
+    private static final int INPUT_HICA_SENSOR_SENSITIVITY = FuncAlgorithms.getNextId();
     private static final int BUTTON_DEFAULT_GAME_MODE = FuncAlgorithms.getNextId();
     private static final int BUTTON_PLAYING_GAME_MODE = FuncAlgorithms.getNextId();
     private static final int BUTTON_ADD_MAP = FuncAlgorithms.getNextId();
+    private static final int BUTTON_ADD_BANNED_BLOCK = FuncAlgorithms.getNextId();
 
     private static final int ELEMENTS_PADDING = 5;
     private static final int INPUT_HEIGHT = 18;
@@ -55,11 +56,13 @@ public class GuiContainerSettings extends GuiContainer {
     private GuiTextField inputHallPositionX;
     private GuiTextField inputHallPositionY;
     private GuiTextField inputHallPositionZ;
+    private GuiTextField inputHicaSensorSensitivity;
 
     private GuiButton buttonDefaultGameMode;
     private GuiButton buttonPlayingGameMode;
 
     private GuiButton buttonAddMap;
+    private GuiButton buttonAddBannedBlock;
 
     private List<GuiTextField> inputList = new ArrayList<GuiTextField>();
 
@@ -73,7 +76,7 @@ public class GuiContainerSettings extends GuiContainer {
     public GuiContainerSettings(ContainerSettings inventorySlotsIn) {
         super(inventorySlotsIn);
         this.xSize = 250;
-        this.ySize = 190;
+        this.ySize = 238;
         this.inventorySlotsIn = inventorySlotsIn;
     }
 
@@ -92,23 +95,23 @@ public class GuiContainerSettings extends GuiContainer {
 
         List<Integer> widthList = new ArrayList<Integer>();
 
-        widthList.add(this.fontRenderer.getStringWidth(Translation.titleTimeForHunterToWait));
-        widthList.add(this.fontRenderer.getStringWidth(Translation.titleNumberOfHunters));
-        widthList.add(this.fontRenderer.getStringWidth(Translation.titleToolCoolingDownTime));
-        widthList.add(this.fontRenderer.getStringWidth(Translation.titleHallPosition));
+        widthList.add(this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.time_for_hunter_to_wait")));
+        widthList.add(this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.number_of_hunters")));
+        widthList.add(this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.tool_cooling_down_time")));
+        widthList.add(this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.hall_position")));
         leastX = Collections.max(widthList);
         int y = 0;
-        this.fontRenderer.drawString(Translation.titleGui, (this.xSize - this.fontRenderer.getStringWidth(Translation.titleGui)) / 2, y += 6, 0x404040);
-        this.fontRenderer.drawString(Translation.titleTimeForHunterToWait, 6, (y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-        this.fontRenderer.drawString(Translation.titleNumberOfHunters, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-        this.fontRenderer.drawString(Translation.titleToolCoolingDownTime, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-        this.fontRenderer.drawString(Translation.titleHallPosition, 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(I18n.format("block_has.container.settings"), (this.xSize - this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings"))) / 2, y += 6, 0x404040);
+        this.fontRenderer.drawString(I18n.format("block_has.container.settings.time_for_hunter_to_wait"), 6, (y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(I18n.format("block_has.container.settings.number_of_hunters"), 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(I18n.format("block_has.container.settings.tool_cooling_down_time"), 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(I18n.format("block_has.container.settings.hall_position"), 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+        this.fontRenderer.drawString(I18n.format("block_has.container.settings.hica_sensor_sensitivity"), 6, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
 
     }
 
     @Override
     public void initGui() {
-        Translation.update();
         this.drawGuiContainerForegroundLayer(0, 0);
         super.initGui();
         Keyboard.enableRepeatEvents(true);
@@ -129,9 +132,12 @@ public class GuiContainerSettings extends GuiContainer {
         inputList.add(inputHallPositionY = new GuiTextField(INPUT_HALL_POSITION_Y, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
         inputList.add(inputHallPositionZ = new GuiTextField(INPUT_HALL_POSITION_Z, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
 
+        inputList.add(inputHicaSensorSensitivity = new GuiTextField(INPUT_HICA_SENSOR_SENSITIVITY, this.fontRenderer, offsetX + leastX + ELEMENTS_PADDING + 6, y += INPUT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
+
         this.buttonList.add(buttonDefaultGameMode = new GuiButton(BUTTON_DEFAULT_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
         this.buttonList.add(buttonPlayingGameMode = new GuiButton(BUTTON_PLAYING_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
         this.buttonList.add(buttonAddMap = new GuiButton(BUTTON_ADD_MAP, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
+        this.buttonList.add(buttonAddBannedBlock = new GuiButton(BUTTON_ADD_BANNED_BLOCK, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
 
         this.updateInputsValue();
     }
@@ -153,6 +159,8 @@ public class GuiContainerSettings extends GuiContainer {
             message.nbt.setString("operation", "open_gui");
             message.nbt.setInteger("guiId", GuiElementLoader.GUI_ADD_MAP);
             NetworkLoader.instance.sendToServer(message);
+        } else if (button.id == BUTTON_ADD_BANNED_BLOCK) {
+
         }
     }
 
@@ -219,7 +227,9 @@ public class GuiContainerSettings extends GuiContainer {
     }
 
     public void updateSettingsData() {
-        SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).addSettings(
+        SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
+
+        blockHasSettingsGlobal.addSettings(
                 new Vec3d(getInputHallPositionX(), getInputHallPositionY(), getInputHallPositionZ()),
                 getInputTimeForHunterToWait(),
                 getInputNumberOfHunters(),
@@ -227,9 +237,10 @@ public class GuiContainerSettings extends GuiContainer {
                 getButtonDefaultGameMode(),
                 getButtonPlayingGameMode()
         );
+        blockHasSettingsGlobal.setHicaSensorSensitivity(getInputHicaSensorSensitivity());
         BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
-        SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world).writeToNBT(message.nbt);
+        blockHasSettingsGlobal.writeToNBT(message.nbt);
 
         message.nbt.setString("player", inventorySlotsIn.player.getUniqueID().toString());
         message.nbt.setString("operation", "update_settings_data");
@@ -244,7 +255,8 @@ public class GuiContainerSettings extends GuiContainer {
         this.playingGameMode = BlockHasSettingsGlobal.getPlayingGameMode();
         this.drawSelectButton();
 
-        this.buttonAddMap.displayString = Translation.addMap + "...";
+        this.buttonAddMap.displayString = I18n.format("block_has.container.settings.add_map") + "...";
+        this.buttonAddBannedBlock.displayString = I18n.format("block_has.container.settings.add_banned_block") + "...";
 
         inputTimeForHunterToWait.setText(String.valueOf(BlockHasSettingsGlobal.getTimeForHunterToWait()));
         inputNumberOfHunters.setText(String.valueOf(BlockHasSettingsGlobal.getNumberOfHunters()));
@@ -254,6 +266,8 @@ public class GuiContainerSettings extends GuiContainer {
         inputHallPositionX.setText(String.valueOf(hallPosition.x));
         inputHallPositionY.setText(String.valueOf(hallPosition.y));
         inputHallPositionZ.setText(String.valueOf(hallPosition.z));
+
+        inputHicaSensorSensitivity.setText(String.valueOf(BlockHasSettingsGlobal.getHicaSensorSensitivity()));
     }
 
     public int getInputTimeForHunterToWait() {
@@ -281,6 +295,11 @@ public class GuiContainerSettings extends GuiContainer {
         return FuncAlgorithms.getValueWithDefault(inputHallPositionZ.getText(), inventorySlotsIn.player.getPosition().getZ(), -30000000.0d, 30000000.0d);
     }
 
+    public double getInputHicaSensorSensitivity() {
+        return FuncAlgorithms.getValueWithDefault(inputHicaSensorSensitivity.getText(), 1.0d, Double.MIN_VALUE, Double.MAX_VALUE);
+
+    }
+
     public GameType getButtonDefaultGameMode() {
         return this.defaultGameMode;
     }
@@ -291,8 +310,8 @@ public class GuiContainerSettings extends GuiContainer {
 
 
     private void drawSelectButton() {
-        buttonDefaultGameMode.displayString = String.format("%s: %s", Translation.defaultGameMode, I18n.format("gameMode." + defaultGameMode.getName()));
-        buttonPlayingGameMode.displayString = String.format("%s: %s", Translation.playingGameMode, I18n.format("gameMode." + playingGameMode.getName()));
+        buttonDefaultGameMode.displayString = String.format("%s: %s", I18n.format("block_has.container.settings.default_game_mode"), I18n.format("gameMode." + defaultGameMode.getName()));
+        buttonPlayingGameMode.displayString = String.format("%s: %s", I18n.format("block_has.container.settings.playing_game_mode"), I18n.format("gameMode." + playingGameMode.getName()));
     }
 
 }

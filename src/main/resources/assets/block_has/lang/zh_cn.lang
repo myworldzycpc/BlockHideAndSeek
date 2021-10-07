@@ -8,6 +8,7 @@ item.settings.name=设置
 item.force_end.name=强制结束
 item.align_to_grid.name=与网格对齐
 item.get_the_nearest_hider_distance.name=获取最近方块距离
+item.hica_sensor.name=虚卡传感器
 
 itemGroup.item_tab=方块躲猫猫
 
@@ -21,6 +22,7 @@ block_has.container.settings.tool_cooling_down_time=工具冷却CD
 block_has.container.settings.tool_cooling_down_time.tooltip=距离检测工具可供猎人获得最近方块的距离，但是这个物品并不能连续使用，是有冷却CD的。[单位：秒]
 block_has.container.settings.hall_position=等待大厅位置
 block_has.container.settings.hall_position.tooltip=填入等待大厅坐标
+block_has.container.settings.hica_sensor_sensitivity=虚卡传感器灵敏度
 block_has.container.settings.default_game_mode=默认游戏模式
 block_has.container.settings.playing_game_mode=开始后游戏模式
 block_has.container.settings.add_map=添加地图
@@ -30,7 +32,9 @@ block_has.container.settings.remove_map=删除地图
 block_has.container.settings.get_to_there=传送到那里
 block_has.container.settings.select_map_first=请先选择一张地图
 block_has.container.settings.unnamed=未命名
+block_has.container.settings.add_banned_block=添加禁止变身的方块
 
+block_has.chat.block_has=方块躲猫猫
 block_has.chat.become_selected_block.become=你变成了 %s
 block_has.chat.become_selected_block.cant_become=你不能变成 %s
 block_has.chat.player_ready=玩家准备
@@ -48,3 +52,7 @@ block_has.chat.was_killed=%s被%s击杀，请大家小心
 block_has.chat.get_the_nearest_hider_distance.get=距离你(%s, %s, %s)最近的方块位于 %s 格外
 block_has.chat.get_the_nearest_hider_distance.cooling_down=工具冷却时间：%s
 block_has.chat.get_the_nearest_hider_distance.regain=冷却时间已到，重新获得工具
+block_has.chat.end_game=游戏结束
+block_has.chat.last_block=存活到最后的方块：
+block_has.chat.last_hunter=找到最后一个方块的猎人：
+block_has.chat.game_time=游戏时长：

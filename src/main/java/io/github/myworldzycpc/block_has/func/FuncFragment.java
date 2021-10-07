@@ -3,9 +3,9 @@ package io.github.myworldzycpc.block_has.func;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.BlockHasMap;
 import io.github.myworldzycpc.block_has.util.BlockHasPlayer;
-import io.github.myworldzycpc.block_has.util.Translation;
 import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -43,6 +43,7 @@ public class FuncFragment {
         if (worldIn.playerEntities.size() >= 2) {
             if (worldIn.playerEntities.size() > blockHasSettingsGlobal.getNumberOfHunters()) {
                 blockHasPlayingGlobal.setPlaying("playing");
+                blockHasPlayingGlobal.setStartTime(new Date().getTime());
                 List<BlockHasMap> blockHasMaps = blockHasSettingsGlobal.getBlockHasMaps();
                 Random rand = new Random();
                 int randomIndex = rand.nextInt(blockHasMaps.size());
@@ -73,11 +74,11 @@ public class FuncFragment {
                 blockHasPlayingGlobal.setHunterWaitingTime(blockHasSettingsGlobal.getTimeForHunterToWait());
                 startHuntersWaiting(worldIn, blockHasMap);
             } else {
-                FuncOperation.messageAllTranslation(worldIn, "block_has.chat.player_only_one");
+                FuncOperation.messageAllTranslation(worldIn, "block_has.chat.not_enough_hunters");
                 endGame(worldIn);
             }
         } else {
-            FuncOperation.messageAllTranslation(worldIn, "block_has.chat.not_enough_hunters");
+            FuncOperation.messageAllTranslation(worldIn, "block_has.chat.player_only_one");
             endGame(worldIn);
         }
     }
@@ -100,6 +101,9 @@ public class FuncFragment {
                                 FuncOperation.teleportPlayer(player, blockHasMap.spawnPoint);
                                 FuncOperation.title(player, blockHasMap.mapName);
                                 FuncOperation.messageTranslation(player, "block_has.chat.time_out");
+                                for (Item item : Arrays.asList(ModItems.GET_THE_NEAREST_HIDER_DISTANCE, ModItems.HICA_SENSOR)) {
+                                    player.inventory.addItemStackToInventory(new ItemStack(item));
+                                }
                             } else {
                                 FuncOperation.messageTranslation(player, "block_has.chat.hunter_is_coming");
                             }
@@ -143,10 +147,10 @@ public class FuncFragment {
             }
         }
         if (allReady) {
-            FuncOperation.messageAll(worldIn, String.format("%s (%d/%d)", Translation.playerAllReady, playerCountOfReady, worldIn.playerEntities.size()));
+            FuncOperation.messageAll(worldIn, String.format("%s (%d/%d)", I18n.format("block_has.chat.player_all_ready"), playerCountOfReady, worldIn.playerEntities.size()));
             startGame(worldIn);
         } else {
-            FuncOperation.messageAll(worldIn, String.format("%s (%d/%d)", Translation.playerReady, playerCountOfReady, worldIn.playerEntities.size()));
+            FuncOperation.messageAll(worldIn, String.format("%s (%d/%d)", I18n.format("block_has.chat.player_ready"), playerCountOfReady, worldIn.playerEntities.size()));
         }
     }
 

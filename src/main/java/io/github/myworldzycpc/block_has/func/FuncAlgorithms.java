@@ -61,4 +61,12 @@ public class FuncAlgorithms {
         return Math.round(value * Math.pow(10, digit)) / Math.pow(10, digit);
     }
 
+    public static double average(List<Double> list) {
+        double sum = 0;
+        for (double i : list) {
+            sum += i;
+        }
+        return sum / list.size();
+    }
+
 }

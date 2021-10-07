@@ -1,14 +1,22 @@
 package io.github.myworldzycpc.block_has.util;
 
+import io.github.myworldzycpc.block_has.func.FuncAlgorithms;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BlockHasPlayer {
     private UUID playerUUID;
     private Status status;
     private int toolCD;
     private boolean isReady;
+    private List<Vec3d> oldPositions = new ArrayList<Vec3d>();
+    private double lastMinDistance;
+    private double differenceMinDistance;
 
     public UUID getPlayerUUID() {
         return playerUUID;
@@ -34,6 +42,48 @@ public class BlockHasPlayer {
         this.toolCD = toolCD;
     }
 
+    public List<Vec3d> getOldPositions() {
+        return this.oldPositions;
+    }
+
+    public void setOldPositions(List<Vec3d> oldPositions) {
+        this.oldPositions = oldPositions;
+    }
+
+    public void addOldPosition(Vec3d position) {
+        oldPositions.add(position);
+        if (oldPositions.size() > 10) {
+            oldPositions.remove(0);
+        }
+    }
+
+    public Vec3d getAverageOldPosition() {
+        List<Double> listX = this.oldPositions.stream().map(i -> i.x).collect(Collectors.toList());
+        double averageX = FuncAlgorithms.average(listX);
+        List<Double> listY = this.oldPositions.stream().map(i -> i.y).collect(Collectors.toList());
+        double averageY = FuncAlgorithms.average(listY);
+        List<Double> listZ = this.oldPositions.stream().map(i -> i.z).collect(Collectors.toList());
+        double averageZ = FuncAlgorithms.average(listZ);
+        return new Vec3d(averageX, averageY, averageZ);
+    }
+
+    public double getLastMinDistance() {
+        return lastMinDistance;
+    }
+
+    public void setLastMinDistance(double lastMinDistance) {
+        this.lastMinDistance = lastMinDistance;
+    }
+
+    public void setNewMinDistance(double newMinDistance) {
+        this.differenceMinDistance = this.lastMinDistance - newMinDistance;
+        this.lastMinDistance = newMinDistance;
+    }
+
+    public double getDifferenceMinDistance() {
+        return this.differenceMinDistance;
+    }
+
     public boolean isReady() {
         return isReady;
     }
@@ -47,6 +97,9 @@ public class BlockHasPlayer {
         this.status = Status.NULL;
         this.toolCD = -1;
         this.isReady = false;
+        this.lastMinDistance = 0;
+        this.oldPositions = new ArrayList<Vec3d>();
+        this.differenceMinDistance = 0;
     }
 
     public BlockHasPlayer(NBTTagCompound fromNBT) {
@@ -64,6 +117,7 @@ public class BlockHasPlayer {
         rootCompound.setBoolean("isReady", isReady);
         return rootCompound;
     }
+
 
     public enum Status {
         NULL(-1), HUNTER(0), HIDER(1), VISITOR(2);

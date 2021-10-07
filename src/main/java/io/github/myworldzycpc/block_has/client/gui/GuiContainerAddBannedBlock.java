@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GuiContainerAddMap extends GuiContainer {
+public class GuiContainerAddBannedBlock extends GuiContainer {
 
     public ContainerAddMap inventorySlotsIn;
 
@@ -72,7 +72,7 @@ public class GuiContainerAddMap extends GuiContainer {
     private int selectingMapIndex = -1;
     private int roll = 0;
 
-    public GuiContainerAddMap(ContainerAddMap inventorySlotsIn) {
+    public GuiContainerAddBannedBlock(ContainerAddMap inventorySlotsIn) {
         super(inventorySlotsIn);
         this.xSize = 400;
         this.ySize = 190;

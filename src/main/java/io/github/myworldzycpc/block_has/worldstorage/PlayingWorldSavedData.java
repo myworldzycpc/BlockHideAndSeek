@@ -15,9 +15,10 @@ import java.util.UUID;
 public class PlayingWorldSavedData extends WorldSavedData {
 
     private List<BlockHasPlayer> players = new ArrayList<BlockHasPlayer>();
-    private String playing;
+    private String playing = "endGame";
     private int hunterWaitingTime;
     private BlockHasMap blockHasMap;
+    private long startTime;
 
     public List<BlockHasPlayer> getPlayers() {
         return players;
@@ -87,6 +88,14 @@ public class PlayingWorldSavedData extends WorldSavedData {
         return blockHasPlayer;
     }
 
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         this.players.clear();
@@ -100,6 +109,7 @@ public class PlayingWorldSavedData extends WorldSavedData {
         }
         this.playing = playingCompound.getString("playing");
         this.hunterWaitingTime = playingCompound.getInteger("hunterWaitingTime");
+        this.startTime = playingCompound.getLong("startTime");
         this.blockHasMap = new BlockHasMap((NBTTagCompound) playingCompound.getTag("blockHasMap"));
         this.markDirty();
     }
@@ -116,6 +126,7 @@ public class PlayingWorldSavedData extends WorldSavedData {
 
         playingCompound.setString("playing", this.playing);
         playingCompound.setInteger("hunterWaitingTime", this.hunterWaitingTime);
+        playingCompound.setLong("startTime", this.startTime);
         playingCompound.setTag("blockHasMap", this.blockHasMap.toNBT());
 
         nbt.setTag("playing", playingCompound);

@@ -1,5 +1,6 @@
 package io.github.myworldzycpc.block_has.func;
 
+import com.mojang.text2speech.Narrator;
 import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
@@ -9,19 +10,29 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 public class FuncOperation {
 
+    public static void messageCompound(EntityPlayer player, ITextComponent textComponent) {
+        player.sendStatusMessage(textComponent, false);
+    }
+
+    public static void messageAllCompound(World worldIn, ITextComponent textComponent) {
+        for (EntityPlayer playerIn : worldIn.playerEntities) {
+            messageCompound(playerIn, textComponent);
+        }
+    }
 
     public static void message(EntityPlayer player, String text) {
         player.sendStatusMessage(new TextComponentString(text), false);
     }
 
-    public static void messageTranslation(EntityPlayer player, String text, Object... args) {
-        player.sendStatusMessage(new TextComponentTranslation(text, args), false);
+    public static void messageTranslation(EntityPlayer player, String translationKey, Object... args) {
+        player.sendStatusMessage(new TextComponentTranslation(translationKey, args), false);
     }
 
     public static void messageAll(World worldIn, String text) {
@@ -30,9 +41,9 @@ public class FuncOperation {
         }
     }
 
-    public static void messageAllTranslation(World worldIn, String text, Object... args) {
+    public static void messageAllTranslation(World worldIn, String translationKey, Object... args) {
         for (EntityPlayer playerIn : worldIn.playerEntities) {
-            messageTranslation(playerIn, text, args);
+            messageTranslation(playerIn, translationKey, args);
         }
     }
 
@@ -40,8 +51,8 @@ public class FuncOperation {
         player.sendStatusMessage(new TextComponentString(text), true);
     }
 
-    public static void actionbarTranslation(EntityPlayer player, String text, Object... args) {
-        player.sendStatusMessage(new TextComponentTranslation(text, args), true);
+    public static void actionbarTranslation(EntityPlayer player, String translationKey, Object... args) {
+        player.sendStatusMessage(new TextComponentTranslation(translationKey, args), true);
     }
 
     public static void actionbarAll(World worldIn, String text) {
@@ -50,9 +61,9 @@ public class FuncOperation {
         }
     }
 
-    public static void actionbarAllTranslation(World worldIn, String text, Object... args) {
+    public static void actionbarAllTranslation(World worldIn, String translationKey, Object... args) {
         for (EntityPlayer playerIn : worldIn.playerEntities) {
-            actionbarTranslation(playerIn, text, args);
+            actionbarTranslation(playerIn, translationKey, args);
         }
     }
 
@@ -72,11 +83,11 @@ public class FuncOperation {
         }
     }
 
-    public static void titleTranslation(EntityPlayer player, String text, Object... args) {
+    public static void titleTranslation(EntityPlayer player, String translationKey, Object... args) {
         if (player instanceof EntityPlayerMP) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
             SPacketTitle.Type sPacketTitle$type = SPacketTitle.Type.TITLE;
-            SPacketTitle sPacketTitle1 = new SPacketTitle(sPacketTitle$type, new TextComponentTranslation(text, args));
+            SPacketTitle sPacketTitle1 = new SPacketTitle(sPacketTitle$type, new TextComponentTranslation(translationKey, args));
             entityplayermp.connection.sendPacket(sPacketTitle1);
         }
     }
@@ -87,10 +98,14 @@ public class FuncOperation {
         }
     }
 
-    public static void titleAllTranslation(World worldIn, String text, Object... args) {
+    public static void titleAllTranslation(World worldIn, String translationKey, Object... args) {
         for (EntityPlayer playerIn : worldIn.playerEntities) {
-            titleTranslation(playerIn, text, args);
+            titleTranslation(playerIn, translationKey, args);
         }
+    }
+
+    public static void say(String content) {
+        Narrator.getNarrator().say(content);
     }
 
     public static int executeCommand(EntityPlayer playerIn, String command) {

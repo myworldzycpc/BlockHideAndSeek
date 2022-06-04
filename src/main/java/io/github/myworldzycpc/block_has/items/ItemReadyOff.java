@@ -20,7 +20,7 @@ public class ItemReadyOff extends Item implements IHasModel {
 
         setTranslationKey("ready_off");
         setRegistryName("ready_off");
-        if (Reference.DEBUG_MODE) {
+        if (Reference.SHOW_DEBUG_ITEM) {
             setCreativeTab(Main.ITEM_TAB);
         }
 

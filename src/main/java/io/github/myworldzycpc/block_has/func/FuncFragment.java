@@ -64,7 +64,7 @@ public class FuncFragment {
                         FuncOperation.teleportPlayer(player, blockHasMap.spawnPoint);
                         FuncOperation.title(player, blockHasMap.mapName);
                         FuncOperation.messageTranslation(player, "block_has.chat.you_are_block");
-                        for (Item item : Arrays.asList(ModItems.BECOME_SELECTED_BLOCK, ModItems.ALIGN_TO_GRID)) {
+                        for (Item item : Arrays.asList(ModItems.BECOME_SELECTED_BLOCK, ModItems.ALIGN_TO_GRID, ModItems.BACK_TO_PLAYER)) {
                             player.inventory.addItemStackToInventory(new ItemStack(item));
                         }
                     }

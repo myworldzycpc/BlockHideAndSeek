@@ -44,6 +44,7 @@ public class GuiContainerSettings extends GuiContainer {
     private static final int BUTTON_PLAYING_GAME_MODE = FuncAlgorithms.getNextId();
     private static final int BUTTON_ADD_MAP = FuncAlgorithms.getNextId();
     private static final int BUTTON_ADD_BANNED_BLOCK = FuncAlgorithms.getNextId();
+    private static final int BUTTON_DEBUG_MODE = FuncAlgorithms.getNextId();
 
     private static final int ELEMENTS_PADDING = 5;
     private static final int INPUT_HEIGHT = 18;
@@ -63,6 +64,7 @@ public class GuiContainerSettings extends GuiContainer {
 
     private GuiButton buttonAddMap;
     private GuiButton buttonAddBannedBlock;
+    private GuiButton buttonDebugMode;
 
     private List<GuiTextField> inputList = new ArrayList<GuiTextField>();
 
@@ -72,6 +74,7 @@ public class GuiContainerSettings extends GuiContainer {
 
     private GameType defaultGameMode;
     private GameType playingGameMode;
+    private boolean debugMode;
 
     public GuiContainerSettings(ContainerSettings inventorySlotsIn) {
         super(inventorySlotsIn);
@@ -128,6 +131,7 @@ public class GuiContainerSettings extends GuiContainer {
 
         int x = offsetX + leastX + ELEMENTS_PADDING + 6;
         int oneThirdWidth = (inputWidth - ELEMENTS_PADDING * 2) / 3;
+        int oneSecondWidth = (this.xSize - 12 - ELEMENTS_PADDING) / 2;
         inputList.add(inputHallPositionX = new GuiTextField(INPUT_HALL_POSITION_X, this.fontRenderer, x, y += INPUT_HEIGHT + ELEMENTS_PADDING, oneThirdWidth, INPUT_HEIGHT));
         inputList.add(inputHallPositionY = new GuiTextField(INPUT_HALL_POSITION_Y, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
         inputList.add(inputHallPositionZ = new GuiTextField(INPUT_HALL_POSITION_Z, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
@@ -137,7 +141,8 @@ public class GuiContainerSettings extends GuiContainer {
         this.buttonList.add(buttonDefaultGameMode = new GuiButton(BUTTON_DEFAULT_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
         this.buttonList.add(buttonPlayingGameMode = new GuiButton(BUTTON_PLAYING_GAME_MODE, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
         this.buttonList.add(buttonAddMap = new GuiButton(BUTTON_ADD_MAP, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
-        this.buttonList.add(buttonAddBannedBlock = new GuiButton(BUTTON_ADD_BANNED_BLOCK, offsetX + 6, y += 20 + ELEMENTS_PADDING, this.xSize - 12, 20, ""));
+        this.buttonList.add(buttonAddBannedBlock = new GuiButton(BUTTON_ADD_BANNED_BLOCK, offsetX + 6, y += 20 + ELEMENTS_PADDING, oneSecondWidth, 20, ""));
+        this.buttonList.add(buttonDebugMode = new GuiButton(BUTTON_DEBUG_MODE, offsetX + 6 + oneSecondWidth + ELEMENTS_PADDING, y, oneSecondWidth, 20, ""));
 
         this.updateInputsValue();
     }
@@ -160,7 +165,15 @@ public class GuiContainerSettings extends GuiContainer {
             message.nbt.setInteger("guiId", GuiElementLoader.GUI_ADD_MAP);
             NetworkLoader.instance.sendToServer(message);
         } else if (button.id == BUTTON_ADD_BANNED_BLOCK) {
-
+            BlockHasMessage message = new BlockHasMessage();
+            message.nbt = new NBTTagCompound();
+            message.nbt.setString("operation", "open_gui");
+            message.nbt.setInteger("guiId", GuiElementLoader.GUI_ADD_BANNED_BLOCK);
+            NetworkLoader.instance.sendToServer(message);
+        } else if (button.id == BUTTON_DEBUG_MODE) {
+            debugMode = !debugMode;
+            this.drawSelectButton();
+            updateSettingsData();
         }
     }
 
@@ -238,6 +251,7 @@ public class GuiContainerSettings extends GuiContainer {
                 getButtonPlayingGameMode()
         );
         blockHasSettingsGlobal.setHicaSensorSensitivity(getInputHicaSensorSensitivity());
+        blockHasSettingsGlobal.setDebugMode(this.debugMode);
         BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
         blockHasSettingsGlobal.writeToNBT(message.nbt);
@@ -253,6 +267,7 @@ public class GuiContainerSettings extends GuiContainer {
 
         this.defaultGameMode = BlockHasSettingsGlobal.getDefaultGameMode();
         this.playingGameMode = BlockHasSettingsGlobal.getPlayingGameMode();
+        this.debugMode = BlockHasSettingsGlobal.isDebugMode();
         this.drawSelectButton();
 
         this.buttonAddMap.displayString = I18n.format("block_has.container.settings.add_map") + "...";
@@ -310,8 +325,10 @@ public class GuiContainerSettings extends GuiContainer {
 
 
     private void drawSelectButton() {
-        buttonDefaultGameMode.displayString = String.format("%s: %s", I18n.format("block_has.container.settings.default_game_mode"), I18n.format("gameMode." + defaultGameMode.getName()));
-        buttonPlayingGameMode.displayString = String.format("%s: %s", I18n.format("block_has.container.settings.playing_game_mode"), I18n.format("gameMode." + playingGameMode.getName()));
+
+        buttonDefaultGameMode.displayString = I18n.format("block_has.generic.colon", I18n.format("block_has.container.settings.default_game_mode"), I18n.format("gameMode." + defaultGameMode.getName()));
+        buttonPlayingGameMode.displayString = I18n.format("block_has.generic.colon", I18n.format("block_has.container.settings.playing_game_mode"), I18n.format("gameMode." + playingGameMode.getName()));
+        buttonDebugMode.displayString = I18n.format("block_has.generic.colon", I18n.format("block_has.container.settings.show_debug_info"), debugMode ? I18n.format("block_has.generic.on") : I18n.format("block_has.generic.off"));
     }
 
 }

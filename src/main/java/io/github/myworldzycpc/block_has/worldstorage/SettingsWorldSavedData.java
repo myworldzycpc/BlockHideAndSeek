@@ -34,9 +34,11 @@ public class SettingsWorldSavedData extends WorldSavedData {
             "minecraft:wall_sign",
             "minecraft:standing_banner",
             "minecraft:wall_banner",
-            "minecraft:skull"
+            "minecraft:skull",
+            "minecraft:cobblestone_wall"
     ));
     private double hicaSensorSensitivity = 1;
+    private boolean debugMode = true;
 
     public SettingsWorldSavedData(String name) {
         super(name);
@@ -103,6 +105,22 @@ public class SettingsWorldSavedData extends WorldSavedData {
 
     public List<String> getBannedBlocks() {
         return this.bannedBlocks;
+
+    }
+
+    public void setBannedBlock(int index, String id) {
+        this.bannedBlocks.set(index, id);
+        this.markDirty();
+    }
+
+    public void addBannedBlock(String id) {
+        this.bannedBlocks.add(id);
+        this.markDirty();
+    }
+
+    public void removeBannedBlock(int index) {
+        this.bannedBlocks.remove(index);
+        this.markDirty();
     }
 
     public void setHicaSensorSensitivity(double hicaSensorSensitivity) {
@@ -112,6 +130,15 @@ public class SettingsWorldSavedData extends WorldSavedData {
 
     public double getHicaSensorSensitivity() {
         return this.hicaSensorSensitivity;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+        this.markDirty();
     }
 
     @Override
@@ -127,6 +154,7 @@ public class SettingsWorldSavedData extends WorldSavedData {
         this.toolCoolingDownTime = settingsCompound.getInteger("toolCoolingDownTime");
         this.defaultGameMode = GameType.getByID(settingsCompound.getInteger("defaultGameMode"));
         this.playingGameMode = GameType.getByID(settingsCompound.getInteger("playingGameMode"));
+        this.debugMode = settingsCompound.getBoolean("debugMode");
 
         this.blockHasMaps.clear();
         NBTTagList blockHasMapsList = (NBTTagList) settingsCompound.getTag("blockHasMaps");
@@ -155,6 +183,7 @@ public class SettingsWorldSavedData extends WorldSavedData {
         settingsCompound.setInteger("toolCoolingDownTime", toolCoolingDownTime);
         settingsCompound.setInteger("defaultGameMode", defaultGameMode.getID());
         settingsCompound.setInteger("playingGameMode", playingGameMode.getID());
+        settingsCompound.setBoolean("debugMode", debugMode);
 
         NBTTagCompound hallPositionCompound = new NBTTagCompound();
         hallPositionCompound.setDouble("x", hallPosition.x);
@@ -189,5 +218,6 @@ public class SettingsWorldSavedData extends WorldSavedData {
         }
         return (SettingsWorldSavedData) data;
     }
+
 
 }

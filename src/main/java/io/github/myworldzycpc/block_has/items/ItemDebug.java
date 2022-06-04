@@ -21,7 +21,8 @@ public class ItemDebug extends Item implements IHasModel {
     public ItemDebug() {
         setTranslationKey("debug");
         setRegistryName("debug");
-        if (Reference.DEBUG_MODE) {
+
+        if (Reference.SHOW_DEBUG_ITEM) {
             setCreativeTab(Main.ITEM_TAB);
         }
 

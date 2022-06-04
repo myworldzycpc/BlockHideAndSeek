@@ -1,12 +1,15 @@
 package io.github.myworldzycpc.block_has.func;
 
 import com.mojang.text2speech.Narrator;
-import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;
@@ -69,7 +72,10 @@ public class FuncOperation {
 
     public static void debugInfo(World worldIn, String text) {
         System.out.println(text);
-        if (Reference.DEBUG_MODE) {
+        SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
+
+        if (blockHasSettingsGlobal.isDebugMode()) {
+            // todo: change json text
             messageAll(worldIn, String.format("\u00a7a[DEBUG] %s", text));
         }
     }
@@ -130,6 +136,32 @@ public class FuncOperation {
     public static void dirtyAll(World worldIn) {
         PlayingWorldSavedData blockHasPlayingGlobal = PlayingWorldSavedData.getGlobal(worldIn);
         SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
+    }
+
+    public static String getBlockName(String id) {
+
+        Block facingBlock = Block.getBlockFromName(id);
+        if (facingBlock != null) {
+            IBlockState facingBlockState = facingBlock.getDefaultState();
+
+            int facingBlockStateMeta = facingBlock.getMetaFromState(facingBlockState);
+            String facingBlockName = facingBlock.getRegistryName().toString();
+            Item facingBlockItem = Item.getItemFromBlock(facingBlock);
+            String facingBlockItemName = facingBlockItem.getRegistryName().toString();
+            ItemStack facingBlockItemStack = new ItemStack(facingBlockItem, 1, facingBlockStateMeta);
+
+            String blockNameShow;
+
+            if (facingBlockItemName.equals("minecraft:air")) {
+                blockNameShow = facingBlock.getLocalizedName();
+            } else {
+                blockNameShow = facingBlockItem.getItemStackDisplayName(facingBlockItemStack);
+            }
+
+            return blockNameShow;
+        } else {
+            return "";
+        }
     }
 
 }

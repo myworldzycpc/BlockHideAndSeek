@@ -9,6 +9,7 @@ item.force_end.name=Force End
 item.align_to_grid.name=Align To Grid
 item.get_the_nearest_hider_distance.name=Get The Nearest Hider Distance
 item.hica_sensor.name=Hica Sensor
+item.back_to_player.name=Back to player
 
 itemGroup.item_tab=Block Hide And Seek
 
@@ -33,6 +34,10 @@ block_has.container.settings.get_to_there=Get To There
 block_has.container.settings.select_map_first=Please select a map first
 block_has.container.settings.unnamed=Unnamed
 block_has.container.settings.add_banned_block=Add Blocks That Does Not Allow To Become
+block_has.container.settings.select_block_first=Please select a block first
+block_has.container.settings.block_id=Block ID
+block_has.container.settings.remove_block=Remove map
+block_has.container.settings.show_debug_info=Show debug info
 
 block_has.chat.block_has=Block Hide And Seek
 block_has.chat.become_selected_block.become=You have become %s
@@ -56,3 +61,9 @@ block_has.chat.end_game=Game Over
 block_has.chat.last_block=The Last Block To Survive:
 block_has.chat.last_hunter=The Hunter Who Found The Last Block:
 block_has.chat.game_time=Game Duration:
+
+block_has.generic.brackets=%s(%s)
+block_has.generic.colon=%s: %s
+block_has.generic.on=on
+block_has.generic.off=off
+block_has.generic.ellipsis=...

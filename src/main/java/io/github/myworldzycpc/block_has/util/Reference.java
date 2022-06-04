@@ -9,6 +9,6 @@ public class Reference {
     public static final String CLIENT_PROXY_CLASS = "io.github.myworldzycpc.block_has.proxy.ClientProxy";
     public static final String COMMON_PROXY_CLASS = "io.github.myworldzycpc.block_has.proxy.CommonProxy";
 
-    public static final boolean DEBUG_MODE = true;
+    public static boolean SHOW_DEBUG_ITEM = true;
 
 }

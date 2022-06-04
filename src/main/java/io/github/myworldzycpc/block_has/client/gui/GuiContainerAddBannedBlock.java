@@ -1,11 +1,11 @@
 package io.github.myworldzycpc.block_has.client.gui;
 
 import io.github.myworldzycpc.block_has.func.FuncAlgorithms;
-import io.github.myworldzycpc.block_has.inventory.ContainerAddMap;
+import io.github.myworldzycpc.block_has.func.FuncOperation;
+import io.github.myworldzycpc.block_has.inventory.ContainerAddBannedBlock;
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
-import io.github.myworldzycpc.block_has.util.BlockHasMap;
 import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.client.gui.GuiButton;
@@ -16,7 +16,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -27,7 +26,7 @@ import java.util.List;
 
 public class GuiContainerAddBannedBlock extends GuiContainer {
 
-    public ContainerAddMap inventorySlotsIn;
+    public ContainerAddBannedBlock inventorySlotsIn;
 
     private static final String TEXTURE_PATH = Reference.MOD_ID + ":" + "textures/gui/container/gui_add_map.png";
     private static final ResourceLocation TEXTURE = new ResourceLocation(TEXTURE_PATH);
@@ -36,12 +35,8 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
     private static final ResourceLocation TEXTURE2 = new ResourceLocation(TEXTURE_PATH2);
 
     private static final int INPUT_NAME = FuncAlgorithms.getNextId();
-    private static final int INPUT_SPAWN_POINT_X = FuncAlgorithms.getNextId();
-    private static final int INPUT_SPAWN_POINT_Y = FuncAlgorithms.getNextId();
-    private static final int INPUT_SPAWN_POINT_Z = FuncAlgorithms.getNextId();
-    private static final int BUTTON_ADD_MAP = FuncAlgorithms.getNextId();
-    private static final int BUTTON_GET_TO_THERE = FuncAlgorithms.getNextId();
-    private static final int BUTTON_REMOVE_MAP = FuncAlgorithms.getNextId();
+    private static final int BUTTON_ADD_BLOCK = FuncAlgorithms.getNextId();
+    private static final int BUTTON_REMOVE_BLOCK = FuncAlgorithms.getNextId();
 
     private static final int ELEMENTS_PADDING = 5;
     private static final int INPUT_HEIGHT = 18;
@@ -52,27 +47,22 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
 
     private List<GuiTextField> inputList = new ArrayList<GuiTextField>();
 
-    private List<MapSelectButton> mapButtonList = new ArrayList<MapSelectButton>();
+    private List<MapSelectButton> blockButtonList = new ArrayList<MapSelectButton>();
 
     private int leastX;
 
     private boolean hasChange = false;
 
     private GuiTextField inputName;
-    private GuiTextField inputSpawnPointX;
-    private GuiTextField inputSpawnPointY;
-    private GuiTextField inputSpawnPointZ;
 
-    private GuiButton buttonAddMap;
-    private GuiButton buttonGetToThere;
-    private GuiButton buttonRemoveMap;
+    private GuiButton buttonAddBlock;
+    private GuiButton buttonRemoveBlock;
 
-    private int selectingMapButtonId = -1;
-    private int selectingMapButtonIndex = -1;
-    private int selectingMapIndex = -1;
+    private int selectingBlockButtonId = -1;
+    private int selectingBlockIndex = -1;
     private int roll = 0;
 
-    public GuiContainerAddBannedBlock(ContainerAddMap inventorySlotsIn) {
+    public GuiContainerAddBannedBlock(ContainerAddBannedBlock inventorySlotsIn) {
         super(inventorySlotsIn);
         this.xSize = 400;
         this.ySize = 190;
@@ -105,24 +95,22 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
 
         List<Integer> widthList = new ArrayList<Integer>();
 
-        widthList.add(this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.map_name")));
-        widthList.add(this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.map_spawn_point")));
+        widthList.add(this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.block_id")));
         leastX = Collections.max(widthList);
         drawRect(6, 6 + fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING, LIST_WIDTH + 6, this.ySize - 6 - 20 - ELEMENTS_PADDING, 0x63000000);
-        this.fontRenderer.drawString(I18n.format("block_has.container.settings.add_map"), (this.xSize - this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.add_map"))) / 2, 6, 0x404040);
+        this.fontRenderer.drawString(I18n.format("block_has.container.settings.add_banned_block"), (this.xSize - this.fontRenderer.getStringWidth(I18n.format("block_has.container.settings.add_banned_block"))) / 2, 6, 0x404040);
         int x;
         int y;
-        if (this.selectingMapButtonId == -1) {
+        if (this.selectingBlockButtonId == -1) {
             int rightWidth = this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6;
             int rightHeight = this.ySize - 6 - fontRenderer.FONT_HEIGHT - ELEMENTS_PADDING - 6;
-            x = 6 + LIST_WIDTH + ELEMENTS_PADDING + (rightWidth - fontRenderer.getStringWidth(I18n.format("block_has.container.settings.select_map_first"))) / 2;
+            x = 6 + LIST_WIDTH + ELEMENTS_PADDING + (rightWidth - fontRenderer.getStringWidth(I18n.format("block_has.container.settings.select_block_first"))) / 2;
             y = 6 + fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING + (rightHeight - fontRenderer.FONT_HEIGHT) / 2;
-            this.fontRenderer.drawString(I18n.format("block_has.container.settings.select_map_first"), x, y, 0x404040);
+            this.fontRenderer.drawString(I18n.format("block_has.container.settings.select_block_first"), x, y, 0x404040);
         } else {
             x = 6 + LIST_WIDTH + ELEMENTS_PADDING;
             y = 6;
-            this.fontRenderer.drawString(I18n.format("block_has.container.settings.map_name"), x, (y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
-            this.fontRenderer.drawString(I18n.format("block_has.container.settings.map_spawn_point"), x, (y += INPUT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
+            this.fontRenderer.drawString(I18n.format("block_has.container.settings.block_id"), x, (y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING) + (INPUT_HEIGHT - fontRenderer.FONT_HEIGHT) / 2, 0x404040);
         }
     }
 
@@ -134,29 +122,23 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
         int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
 
         this.inputList.clear();
-        this.mapButtonList.clear();
+        this.blockButtonList.clear();
 
         int y = offsetY + 6;
         int x = offsetX + 6 + LIST_WIDTH + ELEMENTS_PADDING + leastX + ELEMENTS_PADDING;
         int inputWidth = this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - leastX - ELEMENTS_PADDING - 6;
         inputList.add(inputName = new GuiTextField(INPUT_NAME, this.fontRenderer, x, y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
-        int oneThirdWidth = (inputWidth - ELEMENTS_PADDING * 2) / 3;
-        inputList.add(inputSpawnPointX = new GuiTextField(INPUT_SPAWN_POINT_X, this.fontRenderer, x, y += INPUT_HEIGHT + ELEMENTS_PADDING, oneThirdWidth, INPUT_HEIGHT));
-        inputList.add(inputSpawnPointY = new GuiTextField(INPUT_SPAWN_POINT_Y, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
-        inputList.add(inputSpawnPointZ = new GuiTextField(INPUT_SPAWN_POINT_Z, this.fontRenderer, x += oneThirdWidth + ELEMENTS_PADDING, y, oneThirdWidth, INPUT_HEIGHT));
         x = offsetX + 6 + LIST_WIDTH + ELEMENTS_PADDING;
-        this.buttonList.add(buttonGetToThere = new GuiButton(BUTTON_GET_TO_THERE, x, y += 20 + ELEMENTS_PADDING, this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6, 20, ""));
-        this.buttonList.add(buttonRemoveMap = new GuiButton(BUTTON_REMOVE_MAP, x, y += 20 + ELEMENTS_PADDING, this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6, 20, ""));
+        this.buttonList.add(buttonRemoveBlock = new GuiButton(BUTTON_REMOVE_BLOCK, x, y += 20 + ELEMENTS_PADDING, this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6, 20, ""));
 
-        int oneSecondWidth = (LIST_WIDTH - ELEMENTS_PADDING) / 2;
-        this.buttonList.add(buttonAddMap = new GuiButton(BUTTON_ADD_MAP, offsetX + 6, offsetY + this.ySize - 6 - 20, LIST_WIDTH, 20, ""));
+        this.buttonList.add(buttonAddBlock = new GuiButton(BUTTON_ADD_BLOCK, offsetX + 6, offsetY + this.ySize - 6 - 20, LIST_WIDTH, 20, ""));
 
         y = offsetY + 6 + fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING;
         int maxY = offsetY + this.ySize - 6 - 20 - ELEMENTS_PADDING;
 
         for (; y + LIST_OPTION_HEIGHT < maxY; y += LIST_OPTION_HEIGHT) {
             MapSelectButton guiButton = new MapSelectButton(FuncAlgorithms.getNextId(), offsetX + 6, y, LIST_WIDTH, LIST_OPTION_HEIGHT, "");
-            this.mapButtonList.add(guiButton);
+            this.blockButtonList.add(guiButton);
             this.buttonList.add(guiButton);
         }
 
@@ -167,44 +149,32 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
-        for (int i = 0; i < this.mapButtonList.size(); i++) {
-            GuiButton guiButton = this.mapButtonList.get(i);
+        for (int i = 0; i < this.blockButtonList.size(); i++) {
+            GuiButton guiButton = this.blockButtonList.get(i);
             if (button.id == guiButton.id) {
-                this.selectingMapButtonId = guiButton.id;
-                this.selectingMapButtonIndex = i;
-                this.selectingMapIndex = i + roll;
+                this.selectingBlockButtonId = guiButton.id;
+                this.selectingBlockIndex = i + roll;
                 this.updateInputsValue();
             }
         }
         SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
-        if (button.id == BUTTON_ADD_MAP) {
+        if (button.id == BUTTON_ADD_BLOCK) {
             BlockPos pos = this.inventorySlotsIn.player.getPosition();
-            BlockHasMap blockHasMap = new BlockHasMap(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), I18n.format("block_has.container.settings.unnamed"));
-            BlockHasSettingsGlobal.addBlockHasMap(blockHasMap);
+            String newBannedBlock = "minecraft:air";
+            BlockHasSettingsGlobal.addBannedBlock(newBannedBlock);
             this.updateSettingsData();
             this.updateInputsValue();
-        } else if (button.id == BUTTON_REMOVE_MAP) {
-            BlockHasSettingsGlobal.removeBlockHasMap(this.selectingMapIndex);
+        } else if (button.id == BUTTON_REMOVE_BLOCK) {
+            BlockHasSettingsGlobal.removeBannedBlock(this.selectingBlockIndex);
             clearSelect();
             this.updateSettingsData();
             this.updateInputsValue();
-        } else if (button.id == BUTTON_GET_TO_THERE) {
-            BlockHasMessage message = new BlockHasMessage();
-            message.nbt = new NBTTagCompound();
-            BlockHasSettingsGlobal.writeToNBT(message.nbt);
-
-            message.nbt.setInteger("selectingMapIndex", this.selectingMapIndex);
-            message.nbt.setString("operation", "teleport");
-
-            NetworkLoader.instance.sendToServer(message);
-
         }
     }
 
     private void clearSelect() {
-        this.selectingMapButtonId = -1;
-        this.selectingMapButtonIndex = -1;
-        this.selectingMapIndex = -1;
+        this.selectingBlockButtonId = -1;
+        this.selectingBlockIndex = -1;
     }
 
     /**
@@ -237,7 +207,10 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
      */
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
+//        super.keyTyped(typedChar, keyCode);
+        if (keyCode == 1) {
+            this.mc.player.closeScreen();
+        }
         for (GuiTextField textField : inputList) {
             textField.textboxKeyTyped(typedChar, keyCode);
         }
@@ -299,22 +272,18 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
     }
 
     public void updateSettingsData() {
-        SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
+        SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
         BlockPos pos = this.inventorySlotsIn.player.getPosition();
-        if (this.selectingMapButtonId != -1) {
-            BlockHasMap blockHasMap = new BlockHasMap(
-                    new Vec3d(
-                            FuncAlgorithms.getValueWithDefault(this.inputSpawnPointX.getText(), pos.getX(), -30000000.0d, 30000000.0d),
-                            FuncAlgorithms.getValueWithDefault(this.inputSpawnPointY.getText(), pos.getY(), 0.0d, 256.0d),
-                            FuncAlgorithms.getValueWithDefault(this.inputSpawnPointZ.getText(), pos.getZ(), -30000000.0d, 30000000.0d)
-                    ),
-                    this.inputName.getText()
-            );
-            BlockHasSettingsGlobal.setBlockHasMap(blockHasMap, this.selectingMapIndex);
+        if (this.selectingBlockButtonId != -1) {
+            String theBlockID = this.inputName.getText();
+            if (!theBlockID.contains(":")) {
+                theBlockID = "minecraft:" + theBlockID;
+            }
+            blockHasSettingsGlobal.setBannedBlock(this.selectingBlockIndex, theBlockID);
         }
         BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
-        BlockHasSettingsGlobal.writeToNBT(message.nbt);
+        blockHasSettingsGlobal.writeToNBT(message.nbt);
 
         message.nbt.setString("player", inventorySlotsIn.player.getUniqueID().toString());
         message.nbt.setString("operation", "update_settings_data");
@@ -325,50 +294,47 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
     public void updateInputsValue() {
         SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
 
-        this.buttonAddMap.displayString = I18n.format("block_has.container.settings.add_map");
-        this.buttonGetToThere.displayString = I18n.format("block_has.container.settings.get_to_there");
-        this.buttonRemoveMap.displayString = I18n.format("block_has.container.settings.remove_map");
+        this.buttonAddBlock.displayString = I18n.format("block_has.container.settings.add_banned_block");
+        this.buttonRemoveBlock.displayString = I18n.format("block_has.container.settings.remove_block");
 
-        this.buttonRemoveMap.visible = !(this.selectingMapButtonId == -1);
-        this.buttonGetToThere.visible = !(this.selectingMapButtonId == -1);
-        this.inputName.setVisible(!(this.selectingMapButtonId == -1));
-        this.inputSpawnPointX.setVisible(!(this.selectingMapButtonId == -1));
-        this.inputSpawnPointY.setVisible(!(this.selectingMapButtonId == -1));
-        this.inputSpawnPointZ.setVisible(!(this.selectingMapButtonId == -1));
+        this.buttonRemoveBlock.visible = !(this.selectingBlockButtonId == -1);
+        this.inputName.setVisible(!(this.selectingBlockButtonId == -1));
 
-        List<BlockHasMap> blockHasMaps = BlockHasSettingsGlobal.getBlockHasMaps();
+        List<String> bannedBlocks = BlockHasSettingsGlobal.getBannedBlocks();
 
-        if (this.selectingMapIndex >= blockHasMaps.size()) {
+        if (this.selectingBlockIndex >= bannedBlocks.size()) {
             clearSelect();
         }
 
-        if (blockHasMaps.size() < this.mapButtonList.size()) {
+        if (bannedBlocks.size() < this.blockButtonList.size()) {
             roll = 0;
         } else {
             if (roll < 0) {
                 roll = 0;
             }
-            if (roll + this.mapButtonList.size() > blockHasMaps.size()) {
-                roll = blockHasMaps.size() - this.mapButtonList.size();
+            if (roll + this.blockButtonList.size() > bannedBlocks.size()) {
+                roll = bannedBlocks.size() - this.blockButtonList.size();
             }
         }
 
-        for (MapSelectButton mapSelectButton : this.mapButtonList) {
-            mapSelectButton.selected = mapSelectButton.id == this.selectingMapButtonId - this.roll;
+        for (MapSelectButton mapSelectButton : this.blockButtonList) {
+            mapSelectButton.selected = mapSelectButton.id == this.selectingBlockButtonId - this.roll;
             mapSelectButton.visible = false;
         }
 
-        for (int i = 0; i < blockHasMaps.size(); i++) {
-            BlockHasMap blockHasMap = blockHasMaps.get(i);
-            if (i == this.selectingMapIndex) {
-                this.inputName.setText(blockHasMap.mapName);
-                this.inputSpawnPointX.setText(String.valueOf(blockHasMap.spawnPoint.x));
-                this.inputSpawnPointY.setText(String.valueOf(blockHasMap.spawnPoint.y));
-                this.inputSpawnPointZ.setText(String.valueOf(blockHasMap.spawnPoint.z));
+        for (int i = 0; i < bannedBlocks.size(); i++) {
+            String bannedBlock = bannedBlocks.get(i);
+            if (i == this.selectingBlockIndex) {
+                this.inputName.setText(bannedBlock);
             }
-            if (i - roll >= 0 && i - roll < this.mapButtonList.size()) {
-                this.mapButtonList.get(i - roll).displayString = blockHasMap.mapName;
-                this.mapButtonList.get(i - roll).visible = true;
+            if (i - roll >= 0 && i - roll < this.blockButtonList.size()) {
+                String blockName = FuncOperation.getBlockName(bannedBlock);
+                if (!blockName.equals("")) {
+                    this.blockButtonList.get(i - roll).displayString = I18n.format("block_has.generic.brackets", bannedBlock, blockName);
+                } else {
+                    this.blockButtonList.get(i - roll).displayString = bannedBlock;
+                }
+                this.blockButtonList.get(i - roll).visible = true;
             }
         }
 

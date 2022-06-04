@@ -4,7 +4,6 @@ import io.github.myworldzycpc.block_has.Main;
 import io.github.myworldzycpc.block_has.func.FuncOperation;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.IHasModel;
-import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,9 +37,9 @@ public class ItemBlockHas extends Item implements IHasModel {
         GameRules gamerules = worldIn.getGameRules();
 
         if (!worldIn.isRemote) {
-            SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
+            SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
             PlayingWorldSavedData blockHasPlayingGlobal = PlayingWorldSavedData.getGlobal(worldIn);
-            Vec3d hallPosition = BlockHasSettingsGlobal.getHallPosition();
+            Vec3d hallPosition = blockHasSettingsGlobal.getHallPosition();
             for (EntityPlayer player : worldIn.playerEntities) {
                 player.setGameType(SettingsWorldSavedData.getGlobal(worldIn).getPlayingGameMode());
                 player.inventory.clear();
@@ -59,7 +58,7 @@ public class ItemBlockHas extends Item implements IHasModel {
                             player.inventory.setInventorySlotContents(8, new ItemStack(ModItems.FORCE_END));
 //                            player.inventory.addItemStackToInventory(new ItemStack(ModItems.FORCE_END));
                         }
-                        gamerules.setOrCreateGameRule("sendCommandFeedback", Reference.DEBUG_MODE ? "true" : "false");
+                        gamerules.setOrCreateGameRule("sendCommandFeedback", blockHasSettingsGlobal.isDebugMode() ? "true" : "false");
                     }
                 }
             }, 1000);

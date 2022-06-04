@@ -1,6 +1,7 @@
 package io.github.myworldzycpc.block_has.inventory;
 
 import io.github.myworldzycpc.block_has.Main;
+import io.github.myworldzycpc.block_has.client.gui.GuiContainerAddBannedBlock;
 import io.github.myworldzycpc.block_has.client.gui.GuiContainerAddMap;
 import io.github.myworldzycpc.block_has.client.gui.GuiContainerDemo;
 import io.github.myworldzycpc.block_has.client.gui.GuiContainerSettings;
@@ -17,6 +18,7 @@ public class GuiElementLoader implements IGuiHandler {
     public static final int GUI_DEMO = FuncAlgorithms.getNextId();
     public static final int GUI_SETTINGS = FuncAlgorithms.getNextId();
     public static final int GUI_ADD_MAP = FuncAlgorithms.getNextId();
+    public static final int GUI_ADD_BANNED_BLOCK = FuncAlgorithms.getNextId();
 
     public GuiElementLoader() {
         NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, this);
@@ -32,6 +34,8 @@ public class GuiElementLoader implements IGuiHandler {
             return new ContainerSettings(player);
         } else if (ID == GUI_ADD_MAP) {
             return new ContainerAddMap(player);
+        } else if (ID == GUI_ADD_BANNED_BLOCK) {
+            return new ContainerAddBannedBlock(player);
         }
         return null;
     }
@@ -45,6 +49,8 @@ public class GuiElementLoader implements IGuiHandler {
             return new GuiContainerSettings(new ContainerSettings(player));
         } else if (ID == GUI_ADD_MAP) {
             return new GuiContainerAddMap(new ContainerAddMap(player));
+        } else if (ID == GUI_ADD_BANNED_BLOCK) {
+            return new GuiContainerAddBannedBlock(new ContainerAddBannedBlock(player));
         }
         return null;
     }

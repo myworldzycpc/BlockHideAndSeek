@@ -237,7 +237,10 @@ public class GuiContainerAddMap extends GuiContainer {
      */
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
+//        super.keyTyped(typedChar, keyCode);
+        if (keyCode == 1) {
+            this.mc.player.closeScreen();
+        }
         for (GuiTextField textField : inputList) {
             textField.textboxKeyTyped(typedChar, keyCode);
         }

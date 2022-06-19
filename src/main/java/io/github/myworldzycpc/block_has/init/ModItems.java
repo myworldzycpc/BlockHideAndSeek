@@ -21,5 +21,9 @@ public class ModItems {
     public static final Item GET_THE_NEAREST_HIDER_DISTANCE = new ItemGetTheNearestHiderDistance();
     public static final Item HICA_SENSOR = new ItemHicaSensor();
     public static final Item BACK_TO_PLAYER = new ItemBackToPlayer();
+    public static final Item BE_HUNTER = new ItemBeHunter();
+    public static final Item BE_BLOCK = new ItemBeBlock();
+    public static final Item BE_SPECTATOR = new ItemBeSpectator();
+
 
 }

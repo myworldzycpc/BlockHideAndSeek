@@ -4,6 +4,7 @@ import io.github.myworldzycpc.block_has.Main;
 import io.github.myworldzycpc.block_has.func.FuncFragment;
 import io.github.myworldzycpc.block_has.func.FuncOperation;
 import io.github.myworldzycpc.block_has.init.ModItems;
+import io.github.myworldzycpc.block_has.util.BlockHasPlayer;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
@@ -15,12 +16,12 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-public class ItemReadyOn extends Item implements IHasModel {
+public class ItemBeHunter extends Item implements IHasModel {
 
-    public ItemReadyOn() {
+    public ItemBeHunter() {
 
-        setTranslationKey("ready_on");
-        setRegistryName("ready_on");
+        setTranslationKey("be_hunter");
+        setRegistryName("be_hunter");
         if (Reference.SHOW_DEBUG_ITEM) {
             setCreativeTab(Main.ITEM_TAB);
         }
@@ -34,13 +35,16 @@ public class ItemReadyOn extends Item implements IHasModel {
      */
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 
-        playerIn.setHeldItem(handIn, new ItemStack(ModItems.READY_OFF));
         if (!worldIn.isRemote) {
-            PlayingWorldSavedData.getGlobal(worldIn).getPlayer(playerIn.getUniqueID()).setReady(false);
+            BlockHasPlayer blockHasPlayer = PlayingWorldSavedData.getGlobal(worldIn).getPlayer(playerIn.getUniqueID());
+            PlayingWorldSavedData.getGlobal(worldIn).getPlayer(playerIn.getUniqueID()).setStatus(BlockHasPlayer.Status.HUNTER);
             PlayingWorldSavedData.getGlobal(worldIn).markDirty();
             FuncOperation.updatePlayingData(worldIn);
 
             FuncFragment.detectForReady(worldIn);
+
+            FuncOperation.messageAllTranslation(worldIn, "block_has.chat.selected", playerIn.getDisplayNameString(), blockHasPlayer.getStatus().getDisplayName());
+
         }
 
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));

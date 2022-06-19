@@ -1,6 +1,7 @@
 package io.github.myworldzycpc.block_has.worldstorage;
 
 import io.github.myworldzycpc.block_has.util.BlockHasMap;
+import io.github.myworldzycpc.block_has.util.BlockHasPlayingMode;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -9,11 +10,14 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class SettingsWorldSavedData extends WorldSavedData {
+
+    public static final String KEY = "settings";
 
     private Vec3d hallPosition = new Vec3d(0, 0, 0);
     private int timeForHunterToWait = 30;
@@ -21,8 +25,8 @@ public class SettingsWorldSavedData extends WorldSavedData {
     private int toolCoolingDownTime = 10;
     private GameType defaultGameMode = GameType.CREATIVE;
     private GameType playingGameMode = GameType.CREATIVE;
-    private List<BlockHasMap> blockHasMaps = new ArrayList<BlockHasMap>();
-    private List<String> bannedBlocks = new ArrayList<String>(Arrays.asList(
+    private List<BlockHasMap> blockHasMaps = new ArrayList<>();
+    private final List<String> bannedBlocks = new ArrayList<>(Arrays.asList(
             "minecraft:tallgrass",
             "minecraft:double_plant",
             "minecraft:fire",
@@ -39,6 +43,10 @@ public class SettingsWorldSavedData extends WorldSavedData {
     ));
     private double hicaSensorSensitivity = 1;
     private boolean debugMode = true;
+    private BlockHasPlayingMode playingMode = BlockHasPlayingMode.RANDOM;
+    private boolean showHUD = true;
+    private boolean antiCheating = true;
+    // add button step: add field (includes getter and setter)
 
     public SettingsWorldSavedData(String name) {
         super(name);
@@ -72,6 +80,17 @@ public class SettingsWorldSavedData extends WorldSavedData {
         return blockHasMaps;
     }
 
+    public List<BlockHasMap> getEnabledBlockHasMaps() {
+        List<BlockHasMap> enabledBlockHasMaps = new ArrayList<>();
+        for (BlockHasMap blockHasMap : blockHasMaps) {
+            if (!blockHasMap.forbidden) {
+                enabledBlockHasMaps.add(blockHasMap);
+            }
+        }
+        return enabledBlockHasMaps;
+    }
+
+    // todo: divide it into lines.
     public void addSettings(Vec3d hallPosition, int timeForHunterToWait, int numberOfHunters, int toolCoolingDownTime,
                             GameType defaultGameMode, GameType playingGameMode) {
         this.hallPosition = hallPosition;
@@ -141,9 +160,36 @@ public class SettingsWorldSavedData extends WorldSavedData {
         this.markDirty();
     }
 
+    public BlockHasPlayingMode getPlayingMode() {
+        return playingMode;
+    }
+
+    public void setPlayingMode(BlockHasPlayingMode playingMode) {
+        this.playingMode = playingMode;
+        this.markDirty();
+    }
+
+    public boolean isShowHUD() {
+        return showHUD;
+    }
+
+    public void setShowHUD(boolean showHUD) {
+        this.showHUD = showHUD;
+        this.markDirty();
+    }
+
+    public boolean isAntiCheating() {
+        return antiCheating;
+    }
+
+    public void setAntiCheating(boolean antiCheating) {
+        this.antiCheating = antiCheating;
+        this.markDirty();
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagCompound settingsCompound = (NBTTagCompound) nbt.getTag("settings");
+        NBTTagCompound settingsCompound = (NBTTagCompound) nbt.getTag(KEY);
         if (settingsCompound == null) {
             settingsCompound = new NBTTagCompound();
         }
@@ -155,6 +201,10 @@ public class SettingsWorldSavedData extends WorldSavedData {
         this.defaultGameMode = GameType.getByID(settingsCompound.getInteger("defaultGameMode"));
         this.playingGameMode = GameType.getByID(settingsCompound.getInteger("playingGameMode"));
         this.debugMode = settingsCompound.getBoolean("debugMode");
+        this.playingMode = BlockHasPlayingMode.fromId(settingsCompound.getInteger("playingMode"));
+        this.showHUD = settingsCompound.getBoolean("showHUD");
+        this.antiCheating = settingsCompound.getBoolean("antiCheating");
+        // add button step: add read
 
         this.blockHasMaps.clear();
         NBTTagList blockHasMapsList = (NBTTagList) settingsCompound.getTag("blockHasMaps");
@@ -175,8 +225,9 @@ public class SettingsWorldSavedData extends WorldSavedData {
         this.markDirty();
     }
 
+    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
         NBTTagCompound settingsCompound = new NBTTagCompound();
         settingsCompound.setInteger("timeForHunterToWait", timeForHunterToWait);
         settingsCompound.setInteger("numberOfHunters", numberOfHunters);
@@ -184,6 +235,10 @@ public class SettingsWorldSavedData extends WorldSavedData {
         settingsCompound.setInteger("defaultGameMode", defaultGameMode.getID());
         settingsCompound.setInteger("playingGameMode", playingGameMode.getID());
         settingsCompound.setBoolean("debugMode", debugMode);
+        settingsCompound.setInteger("playingMode", playingMode.id);
+        settingsCompound.setBoolean("showHUD", showHUD);
+        settingsCompound.setBoolean("antiCheating", antiCheating);
+        // add button step: add NBT
 
         NBTTagCompound hallPositionCompound = new NBTTagCompound();
         hallPositionCompound.setDouble("x", hallPosition.x);
@@ -205,7 +260,7 @@ public class SettingsWorldSavedData extends WorldSavedData {
 
         settingsCompound.setDouble("hicaSensorSensitivity", this.hicaSensorSensitivity);
 
-        nbt.setTag("settings", settingsCompound);
+        nbt.setTag(KEY, settingsCompound);
         return nbt;
     }
 

@@ -6,6 +6,7 @@ import io.github.myworldzycpc.block_has.inventory.ContainerAddBannedBlock;
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
+import io.github.myworldzycpc.block_has.network.OperationType;
 import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.client.gui.GuiButton;
@@ -128,6 +129,7 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
         int x = offsetX + 6 + LIST_WIDTH + ELEMENTS_PADDING + leastX + ELEMENTS_PADDING;
         int inputWidth = this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - leastX - ELEMENTS_PADDING - 6;
         inputList.add(inputName = new GuiTextField(INPUT_NAME, this.fontRenderer, x, y += fontRenderer.FONT_HEIGHT + ELEMENTS_PADDING, inputWidth, INPUT_HEIGHT));
+        inputName.setMaxStringLength(200);
         x = offsetX + 6 + LIST_WIDTH + ELEMENTS_PADDING;
         this.buttonList.add(buttonRemoveBlock = new GuiButton(BUTTON_REMOVE_BLOCK, x, y += 20 + ELEMENTS_PADDING, this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6, 20, ""));
 
@@ -227,7 +229,7 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
         updateSettingsData();
         BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
-        message.nbt.setString("operation", "open_gui");
+        message.nbt.setInteger("operation", OperationType.OPEN_GUI.id);
         message.nbt.setInteger("guiId", GuiElementLoader.GUI_SETTINGS);
         NetworkLoader.instance.sendToServer(message);
     }
@@ -286,7 +288,7 @@ public class GuiContainerAddBannedBlock extends GuiContainer {
         blockHasSettingsGlobal.writeToNBT(message.nbt);
 
         message.nbt.setString("player", inventorySlotsIn.player.getUniqueID().toString());
-        message.nbt.setString("operation", "update_settings_data");
+        message.nbt.setInteger("operation", OperationType.UPDATE_SETTINGS_DATA.id);
 
         NetworkLoader.instance.sendToServer(message);
     }

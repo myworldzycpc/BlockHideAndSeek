@@ -51,6 +51,9 @@ public class ItemGetTheNearestHiderDistance extends Item implements IHasModel {
             double minDistance = Collections.min(distanceList);
             FuncOperation.messageTranslation(playerIn, "block_has.chat.get_the_nearest_hider_distance.get", FuncAlgorithms.roundTo(playerInPosition.x, 2), FuncAlgorithms.roundTo(playerInPosition.y, 2), FuncAlgorithms.roundTo(playerInPosition.z, 2), FuncAlgorithms.roundTo(minDistance, 2));
             blockHasPlayingGlobal.getPlayer(playerIn).setToolCD(blockHasSettingsGlobal.getToolCoolingDownTime());
+            blockHasPlayingGlobal.markDirty();
+            FuncOperation.updatePlayingData(worldIn);
+
             FuncFragment.startToolCoolingDown(worldIn, playerIn);
         }
 

@@ -10,6 +10,9 @@ item.align_to_grid.name=与网格对齐
 item.get_the_nearest_hider_distance.name=获取最近方块距离
 item.hica_sensor.name=虚卡传感器
 item.back_to_player.name=变回玩家
+item.be_hunter.name=作为猎人
+item.be_block.name=作为方块
+item.be_spectator.name=作为旁观者
 
 itemGroup.item_tab=方块躲猫猫
 
@@ -38,6 +41,13 @@ block_has.container.settings.select_block_first=请先选择一个方块
 block_has.container.settings.block_id=方块ID
 block_has.container.settings.remove_block=删除方块
 block_has.container.settings.show_debug_info=显示调试信息
+block_has.container.settings.forbidden_map=禁用地图
+block_has.container.settings.forbidden=禁用
+block_has.container.settings.playing_mode=游玩模式
+block_has.container.settings.free_mode=自由模式
+block_has.container.settings.random_mode=随机模式
+block_has.container.settings.show_hud=抬头显示器
+block_has.container.settings.anti_cheating=数据验证反作弊
 
 block_has.chat.block_has=方块躲猫猫
 block_has.chat.become_selected_block.become=你变成了 %s
@@ -61,9 +71,31 @@ block_has.chat.end_game=游戏结束
 block_has.chat.last_block=存活到最后的方块：
 block_has.chat.last_hunter=找到最后一个方块的猎人：
 block_has.chat.game_time=游戏时长：
+block_has.chat.selected=%s 选择了 %s
+block_has.chat.no_hunter=但是没有猎人，游戏无法开始。
+block_has.chat.no_hider=但是没有方块，游戏无法开始。
+block_has.chat.number_of_hunters=猎人数量
+block_has.chat.number_of_hiders=方块数量
+block_has.chat.name_of_map=地图名称
+block_has.chat.game_will_start.colored=§e猎人将在%s§e后出场
+block_has.chat.seconds.green.colored=§a%d秒
+block_has.chat.seconds.orange.colored=§6%d秒
+block_has.chat.seconds.red.colored=§c%d秒
+block_has.chat.kick_by_cheat=由于检测到作弊行为，你被踢出服务器。请尝试重新进入服务器。
+block_has.chat.kick_somebody_by_cheat=由于检测到作弊行为，%s 被踢出服务器。
+block_has.chat.kick_somebody_by_cheat.colored=§a由于检测到作弊行为，%s 被踢出服务器。
+block_has.chat.hunters_left=猎人已全部退出游戏。
+block_has.chat.hiders_left=方块已全部退出游戏。
 
-block_has.generic.brackets=%s（%s）
+block_has.status.null=Null
+block_has.status.hunter=猎人
+block_has.status.hider=方块
+block_has.status.visitor=旁观者
+
+block_has.generic.brackets=%s§6（%s）§r
 block_has.generic.colon=%s：%s
 block_has.generic.on=开
 block_has.generic.off=关
 block_has.generic.ellipsis=…
+
+tile.skull.skeleton.name=骷髅头颅

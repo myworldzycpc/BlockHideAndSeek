@@ -2,6 +2,7 @@ package io.github.myworldzycpc.block_has.items;
 
 import io.github.myworldzycpc.block_has.Main;
 import io.github.myworldzycpc.block_has.func.FuncFragment;
+import io.github.myworldzycpc.block_has.func.FuncOperation;
 import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import io.github.myworldzycpc.block_has.util.Reference;
@@ -38,6 +39,8 @@ public class ItemReadyOff extends Item implements IHasModel {
         if (!worldIn.isRemote) {
             PlayingWorldSavedData.getGlobal(worldIn).getPlayer(playerIn.getUniqueID()).setReady(true);
             PlayingWorldSavedData.getGlobal(worldIn).markDirty();
+            FuncOperation.updatePlayingData(worldIn);
+
             FuncFragment.detectForReady(worldIn);
         }
 

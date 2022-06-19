@@ -1,15 +1,21 @@
 package io.github.myworldzycpc.block_has.func;
 
 import com.mojang.text2speech.Narrator;
+import io.github.myworldzycpc.block_has.network.BlockHasMessage;
+import io.github.myworldzycpc.block_has.network.NetworkLoader;
+import io.github.myworldzycpc.block_has.network.OperationType;
 import io.github.myworldzycpc.block_has.worldstorage.PlayingWorldSavedData;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.Vec3d;
@@ -17,6 +23,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class FuncOperation {
 
@@ -77,6 +85,7 @@ public class FuncOperation {
         if (blockHasSettingsGlobal.isDebugMode()) {
             // todo: change json text
             messageAll(worldIn, String.format("\u00a7a[DEBUG] %s", text));
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.BLOCK_NOTE_BELL, 1.0F));
         }
     }
 
@@ -164,4 +173,81 @@ public class FuncOperation {
         }
     }
 
+    // send pack
+
+    /**
+     * Be used in server.
+     */
+    public static void updatePlayingData(World worldIn) {
+        if (!worldIn.isRemote) {
+            PlayingWorldSavedData blockHasPlayingGlobal = PlayingWorldSavedData.getGlobal(worldIn);
+
+            BlockHasMessage message = new BlockHasMessage();
+            message.nbt = new NBTTagCompound();
+            blockHasPlayingGlobal.writeToNBT(message.nbt);
+
+            message.nbt.setInteger("operation", OperationType.UPDATE_PLAYING_DATA.id);
+
+            NetworkLoader.instance.sendToAll(message);
+        }
+    }
+
+    /**
+     * Be used in server.
+     */
+    public static void updateSettingsData(World worldIn) {
+        if (!worldIn.isRemote) {
+            SettingsWorldSavedData blockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(worldIn);
+
+            BlockHasMessage message = new BlockHasMessage();
+            message.nbt = new NBTTagCompound();
+            blockHasSettingsGlobal.writeToNBT(message.nbt);
+
+            message.nbt.setInteger("operation", OperationType.UPDATE_SETTINGS_DATA.id);
+
+            NetworkLoader.instance.sendToAll(message);
+        }
+    }
+
+
+    /**
+     * Be used in client.
+     */
+    public static void reportReceivedPack() {
+        BlockHasMessage message = new BlockHasMessage();
+        message.nbt = new NBTTagCompound();
+        message.nbt.setInteger("operation", OperationType.CLIENT_RECEIVED_PACK.id);
+
+        NetworkLoader.instance.sendToServer(message);
+    }
+
+    /**
+     * Be used in client.
+     */
+    public static void kickByCheat() {
+        BlockHasMessage message = new BlockHasMessage();
+        message.nbt = new NBTTagCompound();
+        message.nbt.setInteger("operation", OperationType.KICK_BY_CHEAT.id);
+
+        NetworkLoader.instance.sendToServer(message);
+    }
+
+    // todo: replaces
+    @SideOnly(Side.CLIENT)
+    public static void sendSingleOperationToServer(OperationType operationType) {
+        BlockHasMessage message = new BlockHasMessage();
+        message.nbt = new NBTTagCompound();
+        message.nbt.setInteger("operation", operationType.id);
+
+        NetworkLoader.instance.sendToServer(message);
+    }
+
+    @SideOnly(Side.SERVER)
+    public static void sendSingleOperationToClient(OperationType operationType) {
+        BlockHasMessage message = new BlockHasMessage();
+        message.nbt = new NBTTagCompound();
+        message.nbt.setInteger("operation", operationType.id);
+
+        NetworkLoader.instance.sendToAll(message);
+    }
 }

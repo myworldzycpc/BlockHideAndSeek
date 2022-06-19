@@ -31,7 +31,7 @@ public class ItemForceEnd extends Item implements IHasModel {
             FuncFragment.endGame(worldIn);
         }
 
-        return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
+        return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }
 
     @Override

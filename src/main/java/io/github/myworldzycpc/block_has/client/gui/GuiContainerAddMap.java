@@ -5,6 +5,7 @@ import io.github.myworldzycpc.block_has.inventory.ContainerAddMap;
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
+import io.github.myworldzycpc.block_has.network.OperationType;
 import io.github.myworldzycpc.block_has.util.BlockHasMap;
 import io.github.myworldzycpc.block_has.util.Reference;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
@@ -42,6 +43,7 @@ public class GuiContainerAddMap extends GuiContainer {
     private static final int BUTTON_ADD_MAP = FuncAlgorithms.getNextId();
     private static final int BUTTON_GET_TO_THERE = FuncAlgorithms.getNextId();
     private static final int BUTTON_REMOVE_MAP = FuncAlgorithms.getNextId();
+    private static final int BUTTON_FORBIDDEN_MAP = FuncAlgorithms.getNextId();
 
     private static final int ELEMENTS_PADDING = 5;
     private static final int INPUT_HEIGHT = 18;
@@ -66,11 +68,14 @@ public class GuiContainerAddMap extends GuiContainer {
     private GuiButton buttonAddMap;
     private GuiButton buttonGetToThere;
     private GuiButton buttonRemoveMap;
+    private GuiButton buttonForbiddenMap;
 
     private int selectingMapButtonId = -1;
     private int selectingMapButtonIndex = -1;
     private int selectingMapIndex = -1;
     private int roll = 0;
+
+    private boolean forbidden;
 
     public GuiContainerAddMap(ContainerAddMap inventorySlotsIn) {
         super(inventorySlotsIn);
@@ -147,6 +152,7 @@ public class GuiContainerAddMap extends GuiContainer {
         x = offsetX + 6 + LIST_WIDTH + ELEMENTS_PADDING;
         this.buttonList.add(buttonGetToThere = new GuiButton(BUTTON_GET_TO_THERE, x, y += 20 + ELEMENTS_PADDING, this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6, 20, ""));
         this.buttonList.add(buttonRemoveMap = new GuiButton(BUTTON_REMOVE_MAP, x, y += 20 + ELEMENTS_PADDING, this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6, 20, ""));
+        this.buttonList.add(buttonForbiddenMap = new GuiButton(BUTTON_FORBIDDEN_MAP, x, y += 20 + ELEMENTS_PADDING, this.xSize - 6 - LIST_WIDTH - ELEMENTS_PADDING - 6, 20, ""));
 
         int oneSecondWidth = (LIST_WIDTH - ELEMENTS_PADDING) / 2;
         this.buttonList.add(buttonAddMap = new GuiButton(BUTTON_ADD_MAP, offsetX + 6, offsetY + this.ySize - 6 - 20, LIST_WIDTH, 20, ""));
@@ -179,7 +185,7 @@ public class GuiContainerAddMap extends GuiContainer {
         SettingsWorldSavedData BlockHasSettingsGlobal = SettingsWorldSavedData.getGlobal(inventorySlotsIn.player.world);
         if (button.id == BUTTON_ADD_MAP) {
             BlockPos pos = this.inventorySlotsIn.player.getPosition();
-            BlockHasMap blockHasMap = new BlockHasMap(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), I18n.format("block_has.container.settings.unnamed"));
+            BlockHasMap blockHasMap = new BlockHasMap(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), I18n.format("block_has.container.settings.unnamed"), false);
             BlockHasSettingsGlobal.addBlockHasMap(blockHasMap);
             this.updateSettingsData();
             this.updateInputsValue();
@@ -194,10 +200,14 @@ public class GuiContainerAddMap extends GuiContainer {
             BlockHasSettingsGlobal.writeToNBT(message.nbt);
 
             message.nbt.setInteger("selectingMapIndex", this.selectingMapIndex);
-            message.nbt.setString("operation", "teleport");
+            message.nbt.setInteger("operation", OperationType.TELEPORT.id);
 
             NetworkLoader.instance.sendToServer(message);
 
+        } else if (button.id == BUTTON_FORBIDDEN_MAP) {
+            forbidden = !forbidden;
+            this.drawSelectButton();
+            updateSettingsData();
         }
     }
 
@@ -257,7 +267,7 @@ public class GuiContainerAddMap extends GuiContainer {
         updateSettingsData();
         BlockHasMessage message = new BlockHasMessage();
         message.nbt = new NBTTagCompound();
-        message.nbt.setString("operation", "open_gui");
+        message.nbt.setInteger("operation", OperationType.OPEN_GUI.id);
         message.nbt.setInteger("guiId", GuiElementLoader.GUI_SETTINGS);
         NetworkLoader.instance.sendToServer(message);
     }
@@ -311,7 +321,7 @@ public class GuiContainerAddMap extends GuiContainer {
                             FuncAlgorithms.getValueWithDefault(this.inputSpawnPointY.getText(), pos.getY(), 0.0d, 256.0d),
                             FuncAlgorithms.getValueWithDefault(this.inputSpawnPointZ.getText(), pos.getZ(), -30000000.0d, 30000000.0d)
                     ),
-                    this.inputName.getText()
+                    this.inputName.getText(), forbidden
             );
             BlockHasSettingsGlobal.setBlockHasMap(blockHasMap, this.selectingMapIndex);
         }
@@ -320,7 +330,7 @@ public class GuiContainerAddMap extends GuiContainer {
         BlockHasSettingsGlobal.writeToNBT(message.nbt);
 
         message.nbt.setString("player", inventorySlotsIn.player.getUniqueID().toString());
-        message.nbt.setString("operation", "update_settings_data");
+        message.nbt.setInteger("operation", OperationType.UPDATE_SETTINGS_DATA.id);
 
         NetworkLoader.instance.sendToServer(message);
     }
@@ -334,6 +344,7 @@ public class GuiContainerAddMap extends GuiContainer {
 
         this.buttonRemoveMap.visible = !(this.selectingMapButtonId == -1);
         this.buttonGetToThere.visible = !(this.selectingMapButtonId == -1);
+        this.buttonForbiddenMap.visible = !(this.selectingMapButtonId == -1);
         this.inputName.setVisible(!(this.selectingMapButtonId == -1));
         this.inputSpawnPointX.setVisible(!(this.selectingMapButtonId == -1));
         this.inputSpawnPointY.setVisible(!(this.selectingMapButtonId == -1));
@@ -368,12 +379,19 @@ public class GuiContainerAddMap extends GuiContainer {
                 this.inputSpawnPointX.setText(String.valueOf(blockHasMap.spawnPoint.x));
                 this.inputSpawnPointY.setText(String.valueOf(blockHasMap.spawnPoint.y));
                 this.inputSpawnPointZ.setText(String.valueOf(blockHasMap.spawnPoint.z));
+                this.forbidden = blockHasMap.forbidden;
+                this.drawSelectButton();
             }
             if (i - roll >= 0 && i - roll < this.mapButtonList.size()) {
-                this.mapButtonList.get(i - roll).displayString = blockHasMap.mapName;
+                this.mapButtonList.get(i - roll).displayString = blockHasMap.forbidden ? I18n.format("block_has.generic.brackets", blockHasMap.mapName, I18n.format("block_has.container.settings.forbidden")) : blockHasMap.mapName;
                 this.mapButtonList.get(i - roll).visible = true;
             }
         }
+
+    }
+
+    private void drawSelectButton() {
+        buttonForbiddenMap.displayString = I18n.format("block_has.generic.colon", I18n.format("block_has.container.settings.forbidden_map"), forbidden ? I18n.format("block_has.generic.on") : I18n.format("block_has.generic.off"));
 
     }
 

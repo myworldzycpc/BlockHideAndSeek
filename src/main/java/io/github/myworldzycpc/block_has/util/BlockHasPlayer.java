@@ -1,6 +1,7 @@
 package io.github.myworldzycpc.block_has.util;
 
 import io.github.myworldzycpc.block_has.func.FuncAlgorithms;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 
@@ -120,12 +121,17 @@ public class BlockHasPlayer {
 
 
     public enum Status {
-        NULL(-1), HUNTER(0), HIDER(1), VISITOR(2);
+        NULL(-1, "block_has.status.null"),
+        HUNTER(0, "block_has.status.hunter"),
+        HIDER(1, "block_has.status.hider"),
+        VISITOR(2, "block_has.status.visitor");
 
         public int id;
+        public String translationKey;
 
-        Status(int id) {
+        Status(int id, String translationKey) {
             this.id = id;
+            this.translationKey = translationKey;
         }
 
         public static Status fromId(int id) {
@@ -135,6 +141,10 @@ public class BlockHasPlayer {
                 }
             }
             return null;
+        }
+
+        public String getDisplayName() {
+            return I18n.format(this.translationKey);
         }
     }
 }

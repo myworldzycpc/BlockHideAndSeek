@@ -5,6 +5,7 @@ import io.github.myworldzycpc.block_has.init.ModItems;
 import io.github.myworldzycpc.block_has.inventory.GuiElementLoader;
 import io.github.myworldzycpc.block_has.network.BlockHasMessage;
 import io.github.myworldzycpc.block_has.network.NetworkLoader;
+import io.github.myworldzycpc.block_has.network.OperationType;
 import io.github.myworldzycpc.block_has.util.IHasModel;
 import io.github.myworldzycpc.block_has.worldstorage.SettingsWorldSavedData;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,11 +37,11 @@ public class ItemSettings extends Item implements IHasModel {
             BlockHasMessage message = new BlockHasMessage();
             message.nbt = new NBTTagCompound();
             SettingsWorldSavedData.getGlobal(worldIn).writeToNBT(message.nbt);
-            message.nbt.setString("operation", "open_gui");
+            message.nbt.setInteger("operation", OperationType.OPEN_GUI.id);
             message.nbt.setInteger("guiId", GuiElementLoader.GUI_SETTINGS);
             NetworkLoader.instance.sendTo(message, (EntityPlayerMP) playerIn);
         }
-        return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
+        return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }
 
     @Override

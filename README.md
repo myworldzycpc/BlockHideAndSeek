@@ -23,7 +23,7 @@ Hiders can transform into blocks to blend into the terrain, while Hunters must f
 ## Installation
 
 1. Install Minecraft Forge 1.12.2 (recommended using the [official installer](https://files.minecraftforge.net/net/minecraftforge/index_1.12.2.html)).
-2. Download the latest mod JAR `blockhas-1.2.jar` from the [Releases](https://gitee.com/myworldzycpc/BlockHideAndSeek/releases) page.
+2. Download the latest mod JAR `blockhas-1.2-1.12.2.jar` from the [Releases](https://gitee.com/myworldzycpc/BlockHideAndSeek/releases) page.
 3. Install a mod that provides the `/morph` command (e.g., [Metamorph](https://www.curseforge.com/minecraft/mc-mods/metamorph)).
 4. Place the JAR file into Minecraft's `mods` folder.
 5. Launch the game.
@@ -165,7 +165,7 @@ Supports the following languages:
 ./gradlew build
 ```
 
-The built JAR is located at `build/libs/blockhas-1.2.jar`.
+The built JAR is located at `build/libs/blockhas-1.2-1.12.2.jar`.
 
 ### Project Structure
 
@@ -218,7 +218,7 @@ LGPL 2.1 (inherited from the Forge MDK)
 ## 安装方法
 
 1. 安装 Minecraft Forge 1.12.2（推荐使用 [官方安装器](https://files.minecraftforge.net/net/minecraftforge/index_1.12.2.html)）
-2. 从 [Releases](https://gitee.com/myworldzycpc/BlockHideAndSeek/releases) 下载模组最新 jar 文件 `blockhas-1.2.jar`
+2. 从 [Releases](https://gitee.com/myworldzycpc/BlockHideAndSeek/releases) 下载模组最新 jar 文件 `blockhas-1.2-1.12.2.jar`
 3. 安装为 `/morph` 命令提供支持的模组（例如 [Metamorph](https://www.curseforge.com/minecraft/mc-mods/metamorph)）
 4. 将 JAR 文件放入 Minecraft 的 `mods` 文件夹
 5. 启动游戏即可
@@ -360,7 +360,7 @@ LGPL 2.1 (inherited from the Forge MDK)
 ./gradlew build
 ```
 
-构建产物位于 `build/libs/blockhas-1.2.jar`。
+构建产物位于 `build/libs/blockhas-1.2-1.12.2.jar`。
 
 ### 项目结构
 

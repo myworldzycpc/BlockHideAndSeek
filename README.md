@@ -1,62 +1,192 @@
--------------------------------------------
-Source installation information for modders
--------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
-some small patches to the vanilla MCP source code, giving you and it access 
-to some of the data and functions you need to build a successful mod.
+# Block Hide And Seek 方块躲猫猫
 
-Note also that the patches are built against "unrenamed" MCP source code (aka
-srgnames) - this means that you will not be able to read them directly against
-normal code.
+一款 Minecraft 1.12.2 Forge 模组，为「方块躲猫猫」小游戏提供完整引擎支持。
 
-Source pack installation information:
+躲藏者（Hider）可以变身成方块融入地形，猎人（Hunter）则需要在限时内找出并消灭所有躲藏者。
 
-Standalone source installation
-==============================
+## 环境要求
 
-See the Forge Documentation online for more detailed instructions:
-http://mcforge.readthedocs.io/en/latest/gettingstarted/
+| 项目        | 版本           |
+|-----------|--------------|
+| Minecraft | 1.12.2       |
+| Forge     | 14.23.5.2836 |
+| Java      | 8 (1.8)      |
 
-Step 1: Open your command-line and browse to the folder where you extracted the zip file.
+> 本模组除为 `/morph` 命令提供支持的模组以外无任何外部模组依赖，安装 Forge 后放入 mods 文件夹即可使用。
 
-Step 2: Once you have a command window up in the folder that the downloaded material was placed, type:
+## 安装方法
 
-Windows: "gradlew setupDecompWorkspace"
-Linux/Mac OS: "./gradlew setupDecompWorkspace"
+1. 安装 Minecraft Forge 1.12.2（推荐使用 [官方安装器](https://files.minecraftforge.net/net/minecraftforge/index_1.12.2.html)）
+2. 从 [Releases](https://gitee.com/myworldzycpc/BlockHideAndSeek/releases) 下载模组最新 jar 文件 `blockhas-1.2.jar`
+3. 安装为 `/morph` 命令提供支持的模组（例如 [Metamorph](https://www.curseforge.com/minecraft/mc-mods/metamorph)）
+4. 将 JAR 文件放入 Minecraft 的 `mods` 文件夹
+5. 启动游戏即可
 
-Step 3: After all that finished, you're left with a choice.
-For eclipse, run "gradlew eclipse" (./gradlew eclipse if you are on Mac/Linux)
+## 快速开始
 
-If you prefer to use IntelliJ, steps are a little different.
-1. Open IDEA, and import project.
-2. Select your build.gradle file and have it import.
-3. Once it's finished you must close IntelliJ and run the following command:
+### 1. 准备地图
 
-"gradlew genIntellijRuns" (./gradlew genIntellijRuns if you are on Mac/Linux)
+准备好一张地形完整的 Minecraft 地图，**手动用方块围好边界**（本模组不提供防出图功能）。
 
-Step 4: The final step is to open Eclipse and switch your workspace to /eclipse/ (if you use IDEA, it should automatically start on your project)
+### 2. 配置游戏
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can run "gradlew --refresh-dependencies" to refresh the local cache. "gradlew clean" to reset everything {this does not affect your code} and then start the processs again.
+- 拿出「设置」物品（`block_has:settings`），**右键**打开设置界面
+- 在设置界面中完成以下配置：
+    - **大厅位置**：设置玩家集合的坐标点
+    - **添加地图**：将当前地图注册到模组中，并设置出生点
+    - **猎人数量**：指定每局游戏的猎人人数
+    - **猎人等待时间**：躲藏者的准备时间（默认 30 秒）
+    - **游戏模式**：选择「随机模式」或「自由模式」
+    - 其他选项（详见下方）
 
-Should it still not work, 
-Refer to #ForgeGradle on EsperNet for more information about the gradle environment.
+### 3. 开始游戏
 
-Tip:
-If you do not care about seeing Minecraft's source code you can replace "setupDecompWorkspace" with one of the following:
-"setupDevWorkspace": Will patch, deobfuscate, and gather required assets to run minecraft, but will not generate human readable source code.
-"setupCIWorkspace": Same as Dev but will not download any assets. This is useful in build servers as it is the fastest because it does the least work.
+- 所有人集合到大厅后，右键「方块躲猫猫」物品（`block_has:block_has`）
+- 游戏将自动传送玩家、分配角色并开始
 
-Tip:
-When using Decomp workspace, the Minecraft source code is NOT added to your workspace in a editable way. Minecraft is treated like a normal Library. Sources are there for documentation and research purposes and usually can be accessed under the 'referenced libraries' section of your IDE.
+## 游戏模式
 
-Forge source installation
-=========================
-MinecraftForge ships with this code and installs it as part of the forge
-installation process, no further action is required on your part.
+### 随机模式（Random）
 
-LexManos' Install Video
-=======================
-https://www.youtube.com/watch?v=8VEdtQLuLO0&feature=youtu.be
+- 所有玩家获得「准备好了 / 取消准备」物品
+- **右键切换准备状态**，当所有人准备完毕后，系统随机抽取指定数量的猎人，其余玩家为躲藏者
+- 适合大型房间、派对玩法
 
-For more details update more often refer to the Forge Forums:
-http://www.minecraftforge.net/forum/index.php/topic,14048.0.html
+### 自由模式（Free）
+
+- 每位玩家自行选择角色：
+    - 拿出「成为猎人」物品 → 右键选择猎人
+    - 拿出「成为方块」物品 → 右键选择躲藏者
+    - 拿出「成为旁观者」物品 → 右键选择旁观者
+- 至少需要 1 名猎人和 1 名躲藏者才能开始
+
+## 角色与物品
+
+### 躲藏者（Hider）物品
+
+| 物品          | 说明                                     |
+|-------------|----------------------------------------|
+| **变身为选中方块** | 对任意方块右键，你的外观将变成该方块（使用 morph 指令）        |
+| **对齐网格**    | 将你的位置吸附到最近的方块中心（X+0.5, Z+0.5），方便完美融入地形 |
+| **恢复玩家外观**  | 取消变身，恢复正常玩家外观                          |
+
+### 猎人（Hunter）物品
+
+| 物品            | 说明                                                    |
+|---------------|-------------------------------------------------------|
+| **获取最近躲藏者距离** | 右键使用，显示与最近躲藏者的直线距离。使用后有冷却时间，冷却结束后自动刷新                 |
+| **HICA 传感器**  | 随身携带的感应器，外观（0~5 级）会随你与躲藏者的距离变化实时改变。越接近目标变化越明显，帮助你锁定方向 |
+
+### 通用物品
+
+| 物品       | 说明                   |
+|----------|----------------------|
+| **强制结束** | 右键立即结束当前游戏，所有玩家传送回大厅 |
+
+## 游戏流程
+
+```
+准备阶段 → 分配角色 → 传送至地图 → 躲藏者准备时间（30秒倒计时）→ 猎人入场 → 游戏进行 → 游戏结束
+```
+
+1. 右键启动物品后，所有人传送至大厅
+2. 准备好后，躲藏者传送到地图并获得变身物品，有 30 秒（可配置）准备时间进行躲藏
+3. 倒计时结束后，猎人传送入场，开始搜寻
+4. 猎人通过攻击命中躲藏者来淘汰对方（躲藏者变为旁观者）
+5. 当所有躲藏者被找出、或有人使用「强制结束」时，游戏结束
+
+### 游戏结束时
+
+- 显示结算信息：最后一个存活的方块、找到最后方块的猎人、游戏总时长
+- 所有人传送回大厅，清空物品栏，恢复正常状态
+
+## 设置选项详解
+
+在设置界面（400×190 双栏布局）中可配置：
+
+| 选项              | 说明                          |
+|-----------------|-----------------------------|
+| **猎人等待时间**      | 躲藏者的准备时间（秒），默认 30           |
+| **猎人数量**        | 每局猎人人数                      |
+| **工具冷却时间**      | 猎人「获取最近躲藏者距离」的冷却时间（秒）       |
+| **大厅位置 X/Y/Z**  | 玩家集合点的坐标                    |
+| **HICA 传感器灵敏度** | 传感器外观变化的灵敏程度                |
+| **默认游戏模式**      | 新玩家加入时的默认模式                 |
+| **游戏模式**        | 随机（Random）或自由（Free）         |
+| **添加地图**        | 管理地图列表（添加 / 禁用 / 传送到出生点）    |
+| **添加禁止方块**      | 管理躲藏者不能变身的方块列表              |
+| **调试模式**        | 显示调试信息                      |
+| **显示 HUD**      | 在右上角显示游戏信息（时长、猎人/躲藏者人数、地图名） |
+| **防作弊**         | 开启后，使用 F3+B 显示碰撞箱的玩家将被踢出    |
+
+## 默认禁止变身方块列表
+
+躲藏者默认不能变身以下方块（可在设置中自定义增删）：
+
+`tallgrass` `double_plant` `fire` `barrier` `water` `lava` `redstone_wire` `standing_sign` `wall_sign` `standing_banner` `wall_banner` `skull` `cobblestone_wall`
+
+## 网络同步
+
+模组使用 Forge `SimpleNetworkWrapper` 进行客户端与服务端数据同步，包括：
+
+- 设置数据同步（`UPDATE_SETTINGS_DATA`）
+- GUI 打开指令（`OPEN_GUI`）
+- 传送指令（`TELEPORT`）
+- 游戏状态同步（`UPDATE_PLAYING_DATA`）
+- 防作弊踢出（`KICK_BY_CHEAT`）
+- 关闭碰撞箱显示（`CLOSE_BOUNDING_BOX`）
+
+## 注意事项
+
+- 本模组主要为**单人/局域网集成服务器**设计（使用 `Minecraft.getMinecraft().getIntegratedServer()`）
+- 地图需要**手动围好边界**，模组不提供防出图功能
+- 变身功能依赖外部 morph 指令或模组（如 [Metamorph](https://www.curseforge.com/minecraft/mc-mods/metamorph)），请确保服务端可用 `/morph` 命令
+- 房主断开连接会立即结束游戏
+- 玩家坠落伤害已全局禁用，方便躲藏者移动
+
+## 本地化
+
+支持以下语言：
+
+- 🇨🇳 简体中文（`zh_cn.lang`）
+- 🇬🇧 English（`en_us.lang`）
+
+## 开发
+
+### 构建
+
+```bash
+./gradlew build
+```
+
+构建产物位于 `build/libs/blockhas-1.2.jar`。
+
+### 项目结构
+
+```
+src/main/java/io/github/myworldzycpc/block_has/
+├── Main.java              # 模组主类，注册一切
+├── init/                  # 物品注册
+├── items/                 # 所有物品实现（14 个）
+├── func/                  # 核心游戏逻辑
+│   ├── FuncOperation.java # 操作层
+│   ├── FuncFragment.java  # 游戏流程控制（开始/结束/倒计时）
+│   └── FuncAlgorithms.java# 算法工具
+├── network/               # 网络通信
+├── worldstorage/          # 世界数据持久化（设置/游戏状态）
+├── gui/                   # 服务端 GUI 逻辑
+├── client/gui/            # 客户端 GUI 界面
+├── inventory/             # 容器与 GUI 元素加载
+├── proxy/                 # 客户端/通用代理
+├── util/                  # 工具类与事件处理
+└── tabs/                  # 创造模式物品栏标签
+```
+
+## 作者
+
+- **myworldzycpc** — 核心开发
+- **TheRedMaker_** — 协助开发
+
+## 许可证
+
+LGPL 2.1（继承自 Forge MDK）

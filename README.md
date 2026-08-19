@@ -1,5 +1,206 @@
 # Block Hide And Seek 方块躲猫猫
 
+[English](#english) | [中文](#中文)
+
+---
+
+# English
+
+A Minecraft 1.12.2 Forge mod that provides a complete engine for the "Block Hide and Seek" minigame.
+
+Hiders can transform into blocks to blend into the terrain, while Hunters must find and eliminate all Hiders within a time limit.
+
+## Requirements
+
+| Item      | Version      |
+|-----------|--------------|
+| Minecraft | 1.12.2       |
+| Forge     | 14.23.5.2836 |
+| Java      | 8 (1.8)      |
+
+> This mod has no external dependencies except for a mod that provides the `/morph` command. After installing Forge, simply place it in the `mods` folder.
+
+## Installation
+
+1. Install Minecraft Forge 1.12.2 (recommended using the [official installer](https://files.minecraftforge.net/net/minecraftforge/index_1.12.2.html)).
+2. Download the latest mod JAR `blockhas-1.2.jar` from the [Releases](https://gitee.com/myworldzycpc/BlockHideAndSeek/releases) page.
+3. Install a mod that provides the `/morph` command (e.g., [Metamorph](https://www.curseforge.com/minecraft/mc-mods/metamorph)).
+4. Place the JAR file into Minecraft's `mods` folder.
+5. Launch the game.
+
+## Quick Start
+
+### 1. Prepare a Map
+
+Prepare a Minecraft map with complete terrain, **manually enclose the boundaries with blocks** (this mod does not provide out-of-bounds prevention).
+
+### 2. Configure the Game
+
+- Take out the "Settings" item (`block_has:settings`), **right-click** to open the settings GUI.
+- Complete the following configurations in the settings GUI:
+  - **Lobby Location**: Set the coordinate point where players gather.
+  - **Add Map**: Register the current map with the mod and set its spawn point.
+  - **Hunter Count**: Specify the number of hunters per game.
+  - **Hunter Waiting Time**: Preparation time for Hiders (default 30 seconds).
+  - **Game Mode**: Choose "Random" or "Free" mode.
+  - Other options (see below for details).
+
+### 3. Start the Game
+
+- After all players gather in the lobby, right-click the "Block Hide and Seek" item (`block_has:block_has`).
+- The game will automatically teleport players, assign roles, and begin.
+
+## Game Modes
+
+### Random Mode
+
+- All players receive a "Ready / Unready" item.
+- **Right-click to toggle ready status**; when all players are ready, the system randomly selects the specified number of Hunters, and the rest become Hiders.
+- Suitable for large rooms and party gameplay.
+
+### Free Mode
+
+- Each player chooses their own role:
+  - Take out the "Become Hunter" item → right-click to become a Hunter.
+  - Take out the "Become Block" item → right-click to become a Hider.
+  - Take out the "Become Spectator" item → right-click to become a Spectator.
+- At least 1 Hunter and 1 Hider are required to start.
+
+## Roles and Items
+
+### Hider Items
+
+| Item                          | Description                                                                                        |
+|-------------------------------|----------------------------------------------------------------------------------------------------|
+| **Morph into selected block** | Right‑click any block to change your appearance into that block (uses the morph command).          |
+| **Snap to grid**              | Aligns your position to the nearest block center (X+0.5, Z+0.5) for perfect blending into terrain. |
+| **Restore player appearance** | Cancels morphing and restores your normal player appearance.                                       |
+
+### Hunter Items
+
+| Item                              | Description                                                                                                                                                                             |
+|-----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Get distance to nearest Hider** | Right‑click to display the straight‑line distance to the nearest Hider. Has a cooldown; refreshes automatically afterwards.                                                             |
+| **HICA Sensor**                   | A carried sensor whose appearance (levels 0–5) changes in real‑time based on your distance to Hiders. The closer you get, the more obvious the change, helping you lock onto direction. |
+
+### Common Items
+
+| Item          | Description                                                                               |
+|---------------|-------------------------------------------------------------------------------------------|
+| **Force End** | Right‑click to instantly end the current game and teleport all players back to the lobby. |
+
+## Game Flow
+
+```
+Preparation → Role Assignment → Teleport to Map → Hider Preparation Time (30‑second countdown) → Hunters Enter → Game in Progress → Game Ends
+```
+
+1. After right‑clicking the start item, all players are teleported to the lobby.
+2. When ready, Hiders are teleported to the map and receive morphing items, with 30 seconds (configurable) to hide.
+3. When the countdown ends, Hunters are teleported in and begin searching.
+4. Hunters eliminate Hiders by hitting them with attacks (Hiders become spectators).
+5. The game ends when all Hiders are found, or someone uses "Force End".
+
+### When the Game Ends
+
+- A summary is displayed: the last surviving block, the Hunter who found the last block, and total game time.
+- All players are teleported back to the lobby, their inventories are cleared, and they are restored to normal state.
+
+## Settings Options Explained
+
+In the settings GUI (400×190, two‑column layout), you can configure:
+
+| Option                      | Description                                                                          |
+|-----------------------------|--------------------------------------------------------------------------------------|
+| **Hunter Waiting Time**     | Preparation time for Hiders (seconds), default 30.                                   |
+| **Hunter Count**            | Number of Hunters per game.                                                          |
+| **Tool Cooldown**           | Cooldown time (seconds) for the Hunter's "Get distance" ability.                     |
+| **Lobby Position X/Y/Z**    | Coordinates for the player gathering point.                                          |
+| **HICA Sensor Sensitivity** | Sensitivity level for the sensor's appearance changes.                               |
+| **Default Game Mode**       | Default mode for new players.                                                        |
+| **Game Mode**               | Random or Free.                                                                      |
+| **Add Map**                 | Manage map list (add / disable / teleport to spawn point).                           |
+| **Add Banned Blocks**       | Manage the list of blocks Hiders cannot morph into.                                  |
+| **Debug Mode**              | Show debug information.                                                              |
+| **Show HUD**                | Display game info (duration, Hunter/Hider counts, map name) in the top‑right corner. |
+| **Anti‑Cheat**              | When enabled, players using F3+B to show hitboxes will be kicked.                    |
+
+## Default Banned Block List
+
+Hiders cannot morph into the following blocks by default (customisable in settings):
+
+`tallgrass` `double_plant` `fire` `barrier` `water` `lava` `redstone_wire` `standing_sign` `wall_sign` `standing_banner` `wall_banner` `skull` `cobblestone_wall`
+
+## Network Synchronisation
+
+The mod uses Forge's `SimpleNetworkWrapper` for client‑server data synchronisation, including:
+
+- Settings data sync (`UPDATE_SETTINGS_DATA`)
+- GUI open command (`OPEN_GUI`)
+- Teleport command (`TELEPORT`)
+- Game state sync (`UPDATE_PLAYING_DATA`)
+- Anti‑cheat kick (`KICK_BY_CHEAT`)
+- Disable hitbox display (`CLOSE_BOUNDING_BOX`)
+
+## Important Notes
+
+- This mod is primarily designed for **single‑player / LAN integrated server** use (using `Minecraft.getMinecraft().getIntegratedServer()`).
+- The map **must be manually enclosed with boundaries** – the mod does not prevent players from leaving the map.
+- Morphing depends on an external morph command or mod (e.g., [Metamorph](https://www.curseforge.com/minecraft/mc-mods/metamorph)); ensure `/morph` is available on the server.
+- If the host disconnects, the game ends immediately.
+- Fall damage is globally disabled to facilitate Hider movement.
+
+## Localisation
+
+Supports the following languages:
+
+- 🇨🇳 Simplified Chinese (`zh_cn.lang`)
+- 🇬🇧 English (`en_us.lang`)
+
+## Development
+
+### Building
+
+```bash
+./gradlew build
+```
+
+The built JAR is located at `build/libs/blockhas-1.2.jar`.
+
+### Project Structure
+
+```
+src/main/java/io/github/myworldzycpc/block_has/
+├── Main.java              # Mod main class, registers everything
+├── init/                  # Item registration
+├── items/                 # All item implementations (14 items)
+├── func/                  # Core game logic
+│   ├── FuncOperation.java # Operation layer
+│   ├── FuncFragment.java  # Game flow control (start/end/countdown)
+│   └── FuncAlgorithms.java# Algorithm utilities
+├── network/               # Network communication
+├── worldstorage/          # World data persistence (settings / game state)
+├── gui/                   # Server‑side GUI logic
+├── client/gui/            # Client‑side GUI screens
+├── inventory/             # Containers and GUI element loading
+├── proxy/                 # Client / Common proxies
+├── util/                  # Utilities and event handlers
+└── tabs/                  # Creative mode inventory tabs
+```
+
+## Authors
+
+- **myworldzycpc** — Core development
+- **TheRedMaker_** — Co‑development
+
+## License
+
+LGPL 2.1 (inherited from the Forge MDK)
+
+---
+
+# 中文
+
 一款 Minecraft 1.12.2 Forge 模组，为「方块躲猫猫」小游戏提供完整引擎支持。
 
 躲藏者（Hider）可以变身成方块融入地形，猎人（Hunter）则需要在限时内找出并消灭所有躲藏者。
